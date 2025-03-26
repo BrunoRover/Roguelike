@@ -10,28 +10,20 @@ using namespace std;
 
 
 
-int selectedMenuItem = 0;
-
-enum EGameState
-{
-    Menu
-};
-
-enum EGameState currentGameState = EGameState::Menu;
+int selectedMenuItem = 0, currentMenuItem = 0, Menu = 0, currentGameState = 0;
+const int Jogar = 0, ComoJogar = 1, Itens = 2, Sair = 3;
 
 vector<string> menuItems =
 {
-        "Iniciar",
+        "Jogar",
         "Como Jogar",
+        "Itens",
         "Sair"
 };
 
-enum EMenuItem
-{
-    Iniciar,
-    ComoJogar,
-    Sair
-};
+void ClearConsole() {
+    cout << "\033c";
+}
 
 void generateMap(vector<vector<int>> &m, int rows, int cols) {
 
@@ -51,7 +43,14 @@ void generateMap(vector<vector<int>> &m, int rows, int cols) {
 
 };
 
-void Game(){
+void Jogo(){
+
+    cout << "Historia do jogo\n" << "Pressione Enter para seguir.\n";
+    cin.get();
+    cout << "mais historia bla bla\n" << "Pressione Enter para seguir.\n";;
+    cin.get();
+    cout << "\033c";
+
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
@@ -108,17 +107,31 @@ void Game(){
                 case 77: case 'd':
                     if(m[y][x+1] == 0) x++;
                 break;
+            }if (tecla == 27) {  // 27 é o código da tecla ESC
+                cout << "Tecla ESC pressionada, jogo encerrado\n Pressione Enter para voltar ao Menu" << endl;
+                cin.get();
+                ClearConsole();
+                cout << "> Jogar\n  Como Jogar\n  Itens\n  Sair\n";
+                break;  // Sai do jogo e volta pro menu.
             }
          }
     }
 
 }
 
-void ClearConsole() {
-    cout << "\033c";
+void Instrucaojogo (){
+    ClearConsole();
+    cout << "   Como Jogar \n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Inserir controles adicionais aqui, se necessário: por exemplo, Use o mouse para mirar e atacar.";
+    cout << "\n2 Gestão de Inventário:\nA cada novo item encontrado, você poderá acessá-lo através do seu inventário, instruções exemplo: I ou Esc \n";
+    cout << "3 Mecânica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, você terá que começar uma nova partida desde o início.\n";
+    cout << "4 Durante o Jogo: \nVocê poderá encontrar itens, que te ajudaram a avançar de fase e subir de nível, o jogo só finaliza quando você matar o boss final.";
+    cout << "\npressione Enter para voltar";
+    cin.get();
+    ClearConsole();
+    cout << "  Jogar\n> Como Jogar\n  Itens\n  Sair\n";// Sai do jogo e volta pro menu.
 }
 
-void RenderMenu()
+void RenderMenu() //renderiza o menu, limpando e reescrevendo com "> ".
 {
     ClearConsole();
 
@@ -128,15 +141,16 @@ void RenderMenu()
 
         if (selectedMenuItem == i)
             printf("> ");
-
+        else
+            printf("  ");
         printf("%s \n", currentMenuItem.c_str());
     }
 
 }
 
-void OnKeyUp()
+void OnKeyUp() //lógica aplicada quando é pressionado a tecla 'W' ou seta pra cima.
 {
-    if (currentGameState == EGameState::Menu)
+    if (currentGameState == Menu)
     {
          if (selectedMenuItem == 0)
             selectedMenuItem = menuItems.size() - 1;
@@ -147,9 +161,9 @@ void OnKeyUp()
     }
 }
 
-void OnKeyDown()
+void OnKeyDown() //lógica aplicada quando é pressionado S ou seta pra baixo.
 {
-    if (currentGameState == EGameState::Menu)
+    if (currentGameState == Menu)
     {
         if (selectedMenuItem == menuItems.size() - 1)
             selectedMenuItem = 0;
@@ -160,24 +174,34 @@ void OnKeyDown()
     }
 }
 
-void OnEnterKeyPressed()
+void OnEnterKeyPressed() //Menu do Jogo.
 {
-    if (currentGameState == EGameState::Menu)
+    if (currentGameState == Menu)
     {
-        EMenuItem currentMenuItem = static_cast<EMenuItem>(selectedMenuItem);
+        currentMenuItem = selectedMenuItem;
 
         switch (currentMenuItem)
         {
-            case EMenuItem::Iniciar:
-                Game();
+            case Jogar: //Será iniciado o jogo se selecionado.
+                Jogo();
                 break;
 
-            case EMenuItem::ComoJogar:
-                cout << "como jogar selecionado";
+            case ComoJogar: //Será exibido as instruções do jogo se for selecionado.
+                Instrucaojogo();
+
 
                 break;
 
-            case EMenuItem::Sair:
+            case Itens: //Será exibido os itens do jogo.
+                ClearConsole();
+                cout << "paçoca, colher, batata\n";
+                cout << "pressione Enter para voltar";
+                cin.get();
+                ClearConsole();
+                cout << "  Jogar\n  Como Jogar\n> Itens\n  Sair\n";
+                break;  // Sai do jogo e volta pro menu.
+
+            case Sair: //Encerrará o programa.
                 cout << "encerrado.";
                 exit(0);
                 break;
@@ -195,18 +219,22 @@ int main()
 
             int first = _getch();
 
-            if (first == 13)
+            // Verifica se é a tecla Enter (código 13) Ou Espaço (código 32).
+            if (first == 13 || first == 32)
                 OnEnterKeyPressed();
 
-            if (first == 224)
-            {
+            // Verifica se é uma tecla de seta ou "W"/"S".
+            if (first == 224) {
                 int second = _getch();
-                if (second == 72)
+                if (second == 72) // Seta para cima.
                     OnKeyUp();
-                else if (second == 80)
+                else if (second == 80) // Seta para baixo.
                     OnKeyDown();
+            } else if (first == 'W' || first == 'w') { // Tecla "W".
+                OnKeyUp();
+            } else if (first == 'S' || first == 's') { // Tecla "S".
+                OnKeyDown();
             }
-
         }
     }
 
