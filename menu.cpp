@@ -40,7 +40,7 @@ void generateMap(vector<vector<int>> &m, int rows, int cols) {
 
 }
 
-void Jogo(){
+void Game(){
 
     cout << "\033c" << "Historia do jogo\n" << "Pressione Enter para seguir.\n";
     cin.get();
@@ -54,7 +54,7 @@ void Jogo(){
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(out, &cursorInfo);
 
-    short int CX=0, CY=0;
+    short int CX=0, CY=0;https://github.com/BrunoRover/Roguelike.git
     COORD coord;
     coord.X = CX;
     coord.Y = CY;
@@ -121,7 +121,7 @@ void ClearConsole() {
     SetConsoleCursorPosition(hConsole, pos);
 }
 
-void Instrucaojogo (){
+void instructiongame(){
     ClearConsole();
     cout << "   Como Jogar \n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Inserir controles adicionais aqui, se necess�rio: por exemplo, Use o mouse para mirar e atacar.";
     cout << "\n2 Gest�o de Invent�rio:\nA cada novo item encontrado, voc� poder� acess�-lo atrav�s do seu invent�rio, instru��es exemplo: I ou Esc \n";
@@ -146,6 +146,7 @@ int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
 string Opcoes[N_OPCOES] = {"Jogar", "Como Jogar", "Itens", "Sair"};
 
 void RenderMenu(int MenuItem){ //renderiza o menu, limpando e reescrevendo com "> ".
+    _kbhit();
     ClearConsole();
     for (int i = 0; i < N_OPCOES; i++){
             if (MenuItem == i){

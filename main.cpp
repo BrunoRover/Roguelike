@@ -9,12 +9,11 @@ using namespace std;
 
 int main()
 {   bool exit = false;
-    while (!exit) {
         RenderMenu(MenuItem);
+    while (!exit) {
 
         if (_kbhit()) { // Verifica se uma tecla foi pressionada.
             int key = _getch(); // Captura a tecla.
-
             switch (key) {
                 case 72: case 'w': case 'W': // Seta para cima ou W.
                     if (MenuItem == 0){
@@ -32,16 +31,16 @@ int main()
                     break;
                 case 13: case 32: // Detecta se foi pressionado a tecla Enter ou Espaço, e exibe na tela o menu do item selecionado.
                     if (Opcoes[MenuItem] == "Jogar"){
-                    Jogo();
+                    Game();
                     }if (Opcoes[MenuItem] == "Como Jogar"){
-                    Instrucaojogo();
+                    instructiongame();
                     }if (Opcoes[MenuItem] == "Itens"){
                     Itens();
                     }if (Opcoes[MenuItem] == "Sair") {
                     cout << "Saindo...\n";
                     exit = true;
                     }break;
-                }
+                }RenderMenu(MenuItem);
         }
     }return 0;
 }
