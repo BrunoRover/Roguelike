@@ -3,126 +3,210 @@
 #include <windows.h>
 #include <cstdlib>
 #include <ctime>
-#include <vector>
-#include <algorithm>
 
 using namespace std;
 
-// Definition of the button array
-const string buttons[4] = {"ATTACK", "DEFEND", "ITEM", "ESCAPE"};
+const int countButtons = 4;
+const string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
+const int maxLifeNpc = 2;
+string addInfoCombate = "";
+int turn = 0;
+int enemyCount = 0;
 
-// Structure to store each combatant
+
+struct Item{
+    int buffId;
+    string name;
+    string description;
+    int value;
+};
+
+struct Player {
+    int life;
+    int attack;
+    int defense;
+    Item inventory[3];
+};
+
+struct Npc {
+    bool healing;
+    int life;
+    int attack;
+    int defense;
+};
+
 struct Combatant {
     string name;
     int initiative;
+    Npc npc;
+    Player player;
+    bool isNpc;
 };
 
-// List of combatants (player + enemies)
-vector<Combatant> combatants;
-
-// Index of the combatant currently taking action
-int currentTurn = 0;
-
-// Function to set the CMD to full screen properly
-void setFullScreen() {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    // Set a buffer large enough to allow full screen
-    COORD bufferSize = {120, 40};  // Defines a buffer of 120 columns x 40 rows
-    SetConsoleScreenBufferSize(hConsole, bufferSize);
-
-    // Adjust display mode to full screen
-    SetConsoleDisplayMode(hConsole, CONSOLE_FULLSCREEN_MODE, 0);
-}
-
-// Function to clear the screen without flickering
 void clearConsole() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD pos = {0, 0};
     SetConsoleCursorPosition(hConsole, pos);
 }
 
-// Function to generate initiative for a combatant
-int generateInitiative() {
-    return rand() % 10 + 1; // Number from 1 to 10
+void generateEnemies( Npc* enemies, int quantity) {
+    enemyCount = quantity;
+    for (int i = 0; i < quantity; i++){
+        enemies[i] = {false,maxLifeNpc,0,0};
+    }
 }
 
-// Function to compare initiatives (to sort from highest to lowest)
-bool compareInitiative(Combatant a, Combatant b) {
-    return a.initiative > b.initiative;
+int randNumb() {
+    return rand() % 10 + 1;
 }
 
-// Function to initialize initiatives
-void initializeInitiatives() {
-    srand(time(0)); // Initialize the random number generator
+bool makeAttack(int attack, int defend){
+    int valueAttack = randNumb() + attack - defend;
 
-    combatants.push_back({"Player", generateInitiative()});
-    combatants.push_back({"Enemy 1", generateInitiative()});
-    combatants.push_back({"Enemy 2", generateInitiative()}); // You can add more enemies
+    if(valueAttack > 5 ){
+        return true;
+    }
 
-    // Sort combatants by initiative (highest to lowest)
-    sort(combatants.begin(), combatants.end(), compareInitiative);
+    return false;
 }
 
-// Function to display the full interface (initiative + buttons)
-void displayCombatInterface(int selectedOption) {
+void sortCombatants(Combatant* combatants, int totalCombatants) {
+    for (int i = 0; i < totalCombatants - 1; i++) {
+        for (int j = 0; j < totalCombatants - i - 1; j++) {
+            if (combatants[j].initiative < combatants[j + 1].initiative) {
+                Combatant temp = combatants[j];
+                combatants[j] = combatants[j + 1];
+                combatants[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void generateInitiatives(Combatant* infoCombat, Npc* enemies, int coutEnemie, Player* player) {
+    
+    int totalCombatants = coutEnemie + 1; // Total = NPCs + 1 jogador
+    
+    infoCombat[0].name = "Jogador";
+    infoCombat[0].isNpc = false;
+    infoCombat[0].initiative = randNumb();
+    infoCombat[0].player = *player;
+    
+    for (int i = 1; i < totalCombatants; i++) {
+        infoCombat[i].name = ("Inimigo " + to_string(i));
+        infoCombat[i].isNpc = true;
+        infoCombat[i].initiative = randNumb();
+        infoCombat[i].npc = enemies[i - 1];
+    }
+
+    sortCombatants(infoCombat, totalCombatants);
+
+}
+
+void actionNpc(Combatant* combatant,Player* player){
+    if(combatant->npc.life <= (maxLifeNpc/2) && !combatant->npc.healing){
+        addInfoCombate = "O drown se curou com uma poção.";
+        combatant->npc.life += 1;
+        combatant->npc.healing = true;
+    }else{
+        bool onHit = makeAttack(combatant->npc.attack,player->defense);
+        if (onHit){
+            player->life -= 1;
+            addInfoCombate = "O drown Acertou um ataque.";
+        }else{
+            addInfoCombate = "O drown Errou o ataque.";
+        }
+    }
+}
+    
+void displayCombatInterface(int selectedOption,Combatant* infoCombat,int coutEnemie) {
     clearConsole();
 
-    // Display initiative list vertically
-    cout << "==================== INITIATIVE ====================" << endl;
-    for (size_t i = 0; i < combatants.size(); i++) {
-        if (i == currentTurn) {
-            cout << "> " << combatants[i].name << " (Init: " << combatants[i].initiative << ")" << endl;
-        } else {
-            cout << "  " << combatants[i].name << " (Init: " << combatants[i].initiative << ")" << endl;
-        }
+    cout << "==================== INICIATIVA ====================" << endl;
+
+    for (int i = 0; i < coutEnemie + 1; i++) {
+        cout << ((i == turn) ? "> ": "  ") << infoCombat[i].name << " (Iniciativa: " << infoCombat[i].initiative << ")" << " Vida: " << ((infoCombat[i].isNpc) ? ( infoCombat[i].npc.life) : ( infoCombat[i].player.life) ) << endl;
     }
     cout << "===================================================" << endl;
 
-    // Display combat menu
-    cout << "Use A (left) and D (right) to navigate | ENTER to confirm\n" << endl;
-
-    for (int i = 0; i < 4; i++) {
-        if (i == selectedOption) {
-            cout << "[>>" << buttons[i] << "<<]   "; // Active button
-        } else {
-            cout << "[ " << buttons[i] << " ]   ";  // Normal button
+    if(!infoCombat[turn].isNpc){
+        cout << "Use A (Esquerda) e D (Direita) para selecionar | ENTER para confirmar\n" << endl;
+    
+        for (int i = 0; i < countButtons; i++) {
+            if (i == selectedOption) {
+                cout << "[>>" << buttons[i] << "<<]   ";
+            } else {
+                cout << "[ " << buttons[i] << " ]   ";
+            }
         }
+        cout << "\n=================================================" << endl;
+    }else{
+        cout << addInfoCombate << endl;
+        cout << "\n=================================================" << endl;
+        cout << "Precione ENTER para prosseguir o turno\n" << endl;
+        cout << "\n=================================================" << endl;
     }
-    cout << "\n=================================================" << endl;
 }
 
-// Function to manage player choice
-void combatMenu() {
-    int selectedOption = 0; // 0 = Attack, 1 = Defend, 2 = Item, 3 = Escape
+void combatMenu(Combatant* infoCombat,int coutEnemie,Player* player) {
+    int selectedOption = 0;
     char key;
+    bool endCombat = false;
+    int indexCombat = 0;
 
-    displayCombatInterface(selectedOption);
-
-    while (true) {
-        key = _getch(); // Captures keyboard input without needing Enter
-
-        if (key == 'a' || key == 'A') { // Move left
-            if (selectedOption > 0) selectedOption--;
-        } else if (key == 'd' || key == 'D') { // Move right
-            if (selectedOption < 3) selectedOption++;
-        } else if (key == '\r') { // Enter key pressed
-            clearConsole();
-            cout << "=================================================" << endl;
-            cout << combatants[currentTurn].name << " chose " << buttons[selectedOption] << "!" << endl;
-            cout << "=================================================" << endl;
-            Sleep(2000);
-            break;
+    while (coutEnemie != 0 || player->life != 0 ) {
+        if(infoCombat[indexCombat].isNpc){
+            actionNpc(&infoCombat[indexCombat],player);
         }
 
-        // Update interface without screen flickering
-        displayCombatInterface(selectedOption);
+        displayCombatInterface(selectedOption,infoCombat,coutEnemie);
+
+        key = _getch();
+        if(!infoCombat[indexCombat].isNpc){
+            if (key == 'a' || key == 'A') {
+                if (selectedOption > 0) selectedOption--;
+            } else if (key == 'd' || key == 'D') {
+                if (selectedOption < 3) selectedOption++;
+            } else if (key == '\r') {
+                switch (selectedOption){
+                    case 0:
+                        bool onHit = makeAttack(infoCombat[indexCombat].player.attack,infoCombat[indexCombat].npc.defense);
+                        
+                    break;
+                    case 1:
+
+                    break;
+                    case 2:
+
+                    break;
+                    case 3:
+
+                    break;
+                }
+            }
+        }else{
+            if (key == '\r') {
+                if(indexCombat == coutEnemie){
+                    indexCombat = 0;
+                }else{
+                    indexCombat += 1;
+                }
+                turn += 1;
+            }
+        }
+
+
+        // displayCombatInterface(selectedOption,infoCombat,coutEnemie);
     }
 }
 
 int main() {
-    setFullScreen(); // Now properly sets full screen
-    initializeInitiatives(); // Sets the initiatives
-    combatMenu(); // Starts the combat menu
+    srand(time(0));
+    Player player = {3,1,1,{}};
+    int coutEnemie = 1;
+    Npc enemies[coutEnemie];
+    generateEnemies(enemies,coutEnemie);
+    Combatant infoCombat[coutEnemie + 1];
+    generateInitiatives(infoCombat, enemies, coutEnemie, &player);
+    combatMenu(infoCombat,coutEnemie,&player);
     return 0;
 }
