@@ -7,8 +7,8 @@
 using namespace std;
 
 const int countButtons = 4;
-const string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 const int maxLifeNpc = 2;
+string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 string addInfoCombate = "";
 int turn = 0;
 int enemyCount = 0;
@@ -18,14 +18,23 @@ struct Item{
     int buffId;
     string name;
     string description;
+    bool unicUse;
     int value;
 };
+
+Item itens[4] = {
+    {1,"Poção de cura","Uma poção feita por um grande alquimista ao usa-la ganha +1 de vida",true,1},
+    {2,"Espada do sol","Uma espada feita com uma sentelha divina do Deus Tyr.Aumenta +2 de acerto permanente",false,2},
+    {3,"Escudo da pureza","Um escudo onde protege o portador de verdadeira alma pura.Aumenta +2 a defesa permanente",false,2},
+    {4,"Pergaminho de misseis magicos","Um pergaminho que retira 1 de vida do inimigo sem precisar de acerto",true,1}
+};
+
 
 struct Player {
     int life;
     int attack;
     int defense;
-    Item inventory[3];
+    Item inventory[4];
 };
 
 struct Npc {
@@ -102,15 +111,15 @@ void generateInitiatives(Combatant* infoCombat, Npc* enemies, int coutEnemie, Pl
 
 }
 
-void actionNpc(Combatant* combatant,Player* player){
-    if(combatant->npc.life <= (maxLifeNpc/2) && !combatant->npc.healing){
+void actionNpc(Combatant* combatant1,Combatant* combatant2){
+    if(combatant1->npc.life <= (maxLifeNpc/2) && !combatant1->npc.healing){
         addInfoCombate = "O drown se curou com uma poção.";
-        combatant->npc.life += 1;
-        combatant->npc.healing = true;
+        combatant1->npc.life += 1;
+        combatant1->npc.healing = true;
     }else{
-        bool onHit = makeAttack(combatant->npc.attack,player->defense);
+        bool onHit = makeAttack(combatant1->npc.attack,combatant2->player.defense);
         if (onHit){
-            player->life -= 1;
+            combatant2->player.life -= 1;
             addInfoCombate = "O drown Acertou um ataque.";
         }else{
             addInfoCombate = "O drown Errou o ataque.";
@@ -132,10 +141,12 @@ void displayCombatInterface(int selectedOption,Combatant* infoCombat,int coutEne
         cout << "Use A (Esquerda) e D (Direita) para selecionar | ENTER para confirmar\n" << endl;
     
         for (int i = 0; i < countButtons; i++) {
-            if (i == selectedOption) {
-                cout << "[>>" << buttons[i] << "<<]   ";
-            } else {
-                cout << "[ " << buttons[i] << " ]   ";
+            if(buttons[i] != ""){
+                if (i == selectedOption) {
+                    cout << "[>>" << buttons[i] << "<<]   ";
+                } else {
+                    cout << "[ " << buttons[i] << " ]   ";
+                }
             }
         }
         cout << "\n=================================================" << endl;
@@ -155,7 +166,7 @@ void combatMenu(Combatant* infoCombat,int coutEnemie,Player* player) {
 
     while (coutEnemie != 0 || player->life != 0 ) {
         if(infoCombat[indexCombat].isNpc){
-            actionNpc(&infoCombat[indexCombat],player);
+            actionNpc(&infoCombat[indexCombat],&infoCombat[(indexCombat == 0 ? 1 :0)]);
         }
 
         displayCombatInterface(selectedOption,infoCombat,coutEnemie);
@@ -169,17 +180,33 @@ void combatMenu(Combatant* infoCombat,int coutEnemie,Player* player) {
             } else if (key == '\r') {
                 switch (selectedOption){
                     case 0:
-                        bool onHit = makeAttack(infoCombat[indexCombat].player.attack,infoCombat[indexCombat].npc.defense);
-                        
+                        bool onHit = makeAttack(infoCombat[indexCombat].player.attack,infoCombat[(indexCombat == 0 ? 1 :0)].npc.defense);
+                        if(onHit){
+                            infoCombat[(indexCombat == 0 ? 1 :0)].npc.life -= 1;
+                        }
                     break;
                     case 1:
-
+                        infoCombat[indexCombat].player.defense += 1;
                     break;
                     case 2:
+                        int indexButton = 0;
+                        for (int i = 0; i < 4; i++){
+                            Item item = infoCombat[indexCombat].player.inventory[i];
+                            if(item.unicUse){
+                                buttons[indexButton] = item.name;
+                                indexButton += 1; 
+                            }
+                        }
 
+                        buttons[countButtons] = "Voltar";
+                        indexButton += 1; 
+                        while (indexButton <= 3){
+                            buttons[indexButton] = "";
+                        }
+                    
                     break;
                     case 3:
-
+                        
                     break;
                 }
             }
@@ -201,7 +228,7 @@ void combatMenu(Combatant* infoCombat,int coutEnemie,Player* player) {
 
 int main() {
     srand(time(0));
-    Player player = {3,1,1,{}};
+    Player player = {3,1,1,{itens[0],itens[1],itens[2],itens[3]}};
     int coutEnemie = 1;
     Npc enemies[coutEnemie];
     generateEnemies(enemies,coutEnemie);
