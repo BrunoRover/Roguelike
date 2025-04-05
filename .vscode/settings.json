@@ -1,5 +1,8 @@
 {
     "files.associations": {
+        "*.page-template": "vue",
+        "*.layout-template": "vue",
+        "*.vue": "vue",
         "cstdlib": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
@@ -7,6 +10,8 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "typeinfo": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp"
     }
 }
