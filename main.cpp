@@ -1,22 +1,26 @@
 #include <iostream>
-#include <stdio.h>
 #include <conio.h>
 #include <windows.h>
 #include <locale.h>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
 const int countButtons = 4;
 const int maxLifeNpc = 2;
+const int maxCombatants = 10;
+const int baseLength = 100;
+
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
-string addInfoCombate = "";
+string addInfoCombat = "";
+string playerInfoCombat = "";
 int turn = 0;
-int enemyCount = 0;
+int countEnemies = 0;
+bool exibirItens = false;
 
-
-struct Item{
+struct Item {
     int buffId;
     string name;
     string description;
@@ -25,12 +29,11 @@ struct Item{
 };
 
 Item itens[4] = {
-    {1,"Poção de cura","Uma poção feita por um grande alquimista ao usa-la ganha +1 de vida",true,1},
-    {2,"Espada do sol","Uma espada feita com uma sentelha divina do Deus Tyr.Aumenta +2 de acerto permanente",false,2},
-    {3,"Escudo da pureza","Um escudo onde protege o portador de verdadeira alma pura.Aumenta +2 a defesa permanente",false,2},
-    {4,"Pergaminho de misseis magicos","Um pergaminho que retira 1 de vida do inimigo sem precisar de acerto",true,1}
+    {1, "Poção de cura", "Uma poção feita por um grande alquimista ao usa-la ganha +1 de vida", true, 1},
+    {2, "Pergaminho de misseis mágicos", "Retira 1 de vida do inimigo sem precisar de acerto", true, 1},
+    {3, "Espada do sol", "Uma espada feita com uma sentelha divina do Deus Tyr. Aumenta +2 de acerto permanente", false, 2},
+    {4, "Escudo da pureza", "Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente", false, 2}
 };
-
 
 struct Player {
     int life;
@@ -53,16 +56,20 @@ struct Combatant {
     Player player;
     bool isNpc;
 };
+string padRight(const string& text) {
+    if (text.length() >= baseLength) return text.substr(0, baseLength);
+    return text + string(baseLength - text.length(), ' ') + "\n";
+}
 
 void clearConsole() {
     COORD coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void generateEnemies( Npc enemies[], int quantity) {
-    enemyCount = quantity;
-    for (int i = 0; i < quantity; i++){
-        enemies[i] = {false,maxLifeNpc,0,0};
+void generateEnemies(Npc enemies[], int quantity) {
+    countEnemies = quantity;
+    for (int i = 0; i < quantity; i++) {
+        enemies[i] = {false, maxLifeNpc, 0, 0};
     }
 }
 
@@ -70,14 +77,9 @@ int randNumb() {
     return rand() % 10 + 1;
 }
 
-bool makeAttack(int attack, int defend){
+bool makeAttack(int attack, int defend) {
     int valueAttack = randNumb() + attack - defend;
-
-    if(valueAttack > 5 ){
-        return true;
-    }
-
-    return false;
+    return (valueAttack > 5);
 }
 
 void sortCombatants(Combatant combatants[], int totalCombatants) {
@@ -92,9 +94,8 @@ void sortCombatants(Combatant combatants[], int totalCombatants) {
     }
 }
 
-void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player& player) {
-
-    int totalCombatants = coutEnemie + 1; // Total = NPCs + 1 jogador
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
+    int totalCombatants = coutEnemie + 1;
 
     infoCombat[0].name = "Jogador";
     infoCombat[0].isNpc = false;
@@ -109,148 +110,253 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     }
 
     sortCombatants(infoCombat, totalCombatants);
-
 }
 
-void actionNpc(Combatant& combatant1,Combatant& combatant2){
-    if(combatant1.npc.life <= (maxLifeNpc/2) && !combatant1.npc.healing){
-        addInfoCombate = "O drown se curou com uma poção.";
-        combatant1.npc.life++;
-        combatant1.npc.healing = true;
-    }else{
-        bool onHit = makeAttack(combatant1.npc.attack,combatant2.player.defense);
-        if (onHit){
-            combatant2.player.life--;
-            addInfoCombate = "O drown Acertou um ataque.";
-        }else{
-            addInfoCombate = "O drown Errou o ataque.";
+void actionNpc(Combatant& npc, Combatant& player) {
+    if (npc.npc.life <= (maxLifeNpc / 2) && !npc.npc.healing) {
+        addInfoCombat = "O inimigo se curou com uma poção.";
+        npc.npc.life++;
+        npc.npc.healing = true;
+    } else {
+        bool onHit = makeAttack(npc.npc.attack, player.player.defense);
+        if (onHit) {
+            player.player.life--;
+            addInfoCombat = "O inimigo acertou um ataque.";
+        } else {
+            addInfoCombat = "O inimigo errou o ataque.";
         }
     }
 }
 
-void displayCombatInterface(int selectedOption,int indexCombat,Combatant infoCombat[],int coutEnemie) {
-    clearConsole();
-
-    cout << "==================== INICIATIVA ====================" << endl;
-
-    for (int i = 0; i < coutEnemie + 1; i++) {
-        cout << ((i == indexCombat) ? "> ": "  ") << infoCombat[i].name << " (Iniciativa: " << infoCombat[i].initiative << ")" << " Vida: " << ((infoCombat[i].isNpc) ? ( infoCombat[i].npc.life) : ( infoCombat[i].player.life) ) << endl;
+void removeCombatant(Combatant infoCombat[], int& totalCombatants, int indexToRemove) {
+    for (int i = indexToRemove; i < totalCombatants - 1; ++i) {
+        infoCombat[i] = infoCombat[i + 1];
     }
-    cout << "===================================================" << endl;
+    totalCombatants--;
+}
 
-    if(!infoCombat[indexCombat].isNpc){
-        cout << "Use A (Esquerda) e D (Direita) para selecionar | ENTER para confirmar\n" << endl;
+void removeItemFromInventory(Combatant& combatant, string item) {
+    int indexitem = 0;
+    for (int i = 0; i <= 3; ++i) {
+        if(combatant.player.inventory[i].name == item){
+            indexitem = i;
+            break;
+        }
+    }
+    for (int i = indexitem; i < 3; ++i) {
+        combatant.player.inventory[i] = combatant.player.inventory[i + 1];
+    }
+    combatant.player.inventory[3] = Item{};
+}
+
+void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoCombat[], int totalCombatants,string buttonsLayout[countButtons]) {
+    clearConsole();
+    string infoCombatant = "";
+    cout << padRight("==================== INICIATIVA ====================");
+    for (int i = 0; i < totalCombatants; i++) {
+        infoCombatant = ((i == indexCombat) ? "> " : "  ");
+        infoCombatant += (infoCombat[i].name + " (Iniciativa: " + to_string(infoCombat[i].initiative) + ") Vida: " + to_string((infoCombat[i].isNpc) ? infoCombat[i].npc.life : infoCombat[i].player.life));
+        cout << padRight(infoCombatant);   
+    }
+    cout << "===================================================\n";
+
+    if (!infoCombat[indexCombat].isNpc) {
+        cout << padRight("Use A (Esquerda) e D (Direita) para selecionar | ENTER para confirmar");
+        string buttonsCombat = "";
         for (int i = 0; i < countButtons; i++) {
-            if(buttons[i] != ""){
-                if (i == selectedOption) {
-                    cout << "[>>" << buttons[i] << "<<]   ";
-                } else {
-                    cout << "[ " << buttons[i] << " ]   ";
+            if (buttonsLayout[i] != "") {
+                if (i == selectedOption){
+                    buttonsCombat += "[>>" + buttonsLayout[i] + "<<]   ";
+                }else{
+                    buttonsCombat += "[ " + buttonsLayout[i] + " ]   ";
                 }
             }
         }
-        cout << "\n=================================================" << endl;
-        cout << addInfoCombate << endl;
-    }else{
-        cout << addInfoCombate << endl;
-        cout << "\n======================================================" << endl;
-        cout << "Precione ENTER para prosseguir o turno           \n" << endl;
-        cout << "\n=================================================" << endl;
+        cout << padRight(buttonsCombat);
+        cout << padRight(playerInfoCombat);
+        cout << padRight("=================================================");
+        cout << padRight(addInfoCombat);
+    } else {
+        cout << padRight(addInfoCombat);
+        cout << padRight("======================================================");
+        cout << padRight(playerInfoCombat);
+        cout << padRight("Precione ENTER para prosseguir o turno");
+        cout << padRight("=================================================");
     }
 }
 
-void combatMenu(Combatant infoCombat[],int coutEnemie,Player player) {
+void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
     bool endCombat = false;
     int indexCombat = 0;
     int actions = 2;
-
-    while ((coutEnemie != 0 || player.life != 0) && endCombat == false) {
-        if(infoCombat[indexCombat].isNpc){
-            actionNpc(infoCombat[indexCombat],infoCombat[(indexCombat == 0 ? 1 :0)]);
-        }else{
-            addInfoCombate = "Você tem " + to_string(actions) + " ações restantes.";
+    int targetIndex = (indexCombat == 0) ? 1 : 0;
+    string buttonsLayout[countButtons] = buttons;
+    
+    while (!endCombat && player.life > 0 && totalCombatants > 1) {
+        if (infoCombat[indexCombat].isNpc) {
+            actionNpc(infoCombat[indexCombat], infoCombat[0]);
+        } else {
+            addInfoCombat = "Você tem " + to_string(actions) + " ações restantes.";
         }
 
-        displayCombatInterface(selectedOption,indexCombat,infoCombat,coutEnemie);
+        displayCombatInterface(selectedOption, indexCombat, infoCombat, totalCombatants,buttonsLayout);
 
         key = _getch();
-        if(!infoCombat[indexCombat].isNpc){
-            if(actions == 2){
+        if (!infoCombat[indexCombat].isNpc) {
+            if (actions == 2) {
+                playerInfoCombat = "";
                 infoCombat[indexCombat].player.defense = player.defense;
                 infoCombat[indexCombat].player.attack = player.attack;
             }
 
             if (key == 'a' || key == 'A') {
-                if (selectedOption > 0) selectedOption--;
+                (selectedOption > 0)?selectedOption--: selectedOption = countButtons - 1;
+                while(buttonsLayout[selectedOption] == ""){
+                    selectedOption--;
+                }
             } else if (key == 'd' || key == 'D') {
-                if (selectedOption < 3) selectedOption++;
+                (selectedOption < (countButtons - 1))? selectedOption++ : selectedOption = 0;
+                while(buttonsLayout[selectedOption] == ""){
+                    if(selectedOption >= (countButtons - 1)){
+                        selectedOption = 0;
+                    }else{
+                        selectedOption++;
+                    }
+                }
             } else if (key == '\r') {
-                switch (selectedOption){
-                    case 0:{
-                        bool onHit = makeAttack(infoCombat[indexCombat].player.attack,infoCombat[(indexCombat == 0 ? 1 :0)].npc.defense);
-                        if(onHit){
+                if (!exibirItens) {
+                    switch (selectedOption) {
+                        case 0: {
+                            if (infoCombat[targetIndex].isNpc) {
+                                bool onHit = makeAttack(infoCombat[indexCombat].player.attack, infoCombat[targetIndex].npc.defense);
+                                if (onHit) {
+                                    playerInfoCombat = "Você acertou o ataque";
+                                    infoCombat[targetIndex].npc.life--;
 
-                            infoCombat[(indexCombat == 0 ? 1 :0)].npc.life--;
-                        }
-                        actions--;
-                    }
-                    break;
-                    case 1:{
-                        infoCombat[indexCombat].player.defense++;
-                        actions--;
-                    }
-                    break;
-                    case 2:{
-                        int indexButton = 0;
-                        for (int i = 0; i < 4; i++){
-                            Item item = infoCombat[indexCombat].player.inventory[i];
-                            if(item.unicUse && indexButton < countButtons - 1){
-                                buttons[indexButton] = item.name;
-                                indexButton++;
+                                    // Verifica se o NPC morreu
+                                    if (infoCombat[targetIndex].npc.life <= 0) {
+                                        playerInfoCombat = infoCombat[targetIndex].name + " foi derrotado!";
+                                        removeCombatant(infoCombat, totalCombatants, targetIndex);
+                                        if (indexCombat >= totalCombatants){
+                                            indexCombat = 0;
+                                        }
+                                        if (totalCombatants == 1){
+                                            endCombat = true;
+                                        }
+                                        continue;
+                                    }
+
+                                } else {
+                                    playerInfoCombat = "Você errou o ataque";
+                                }
                             }
+                            actions--;
                         }
-
-                        buttons[indexButton] = "Voltar";
-                        indexButton++;
-
-                        while (indexButton < countButtons) {
-                            buttons[indexButton] = "";
-                            indexButton++;
+                        break;
+                        case 1:
+                            infoCombat[indexCombat].player.defense++;
+                            playerInfoCombat = "Você aumentou sua defesa";
+                            actions--;
+                            break;
+                        case 2:{
+                            selectedOption = 0;
+                            exibirItens = true;
+                            int indexInventory = 0;
+                            bool toBack = false;
+                            for (int i = 0; i < countButtons; i++){
+                                bool isPush = false;
+                                while (isPush == false && indexInventory < 4){
+                                    if(infoCombat[indexCombat].player.inventory[indexInventory].unicUse){
+                                        isPush = true;
+                                        buttonsLayout[i] = infoCombat[indexCombat].player.inventory[indexInventory].name;
+                                    }
+                                    indexInventory++;
+                                }
+                                if(isPush == false && toBack == false){
+                                    toBack = true;
+                                    buttonsLayout[i] = "Voltar";
+                                }else if(isPush == false){
+                                    buttonsLayout[i] = "";
+                                }
+                            }
+                            
                         }
+                        break;
+                        case 3:
+                            if (randNumb() == 10){
+                                endCombat = true;
+                            }else{
+                                playerInfoCombat = "Você não conseguiu fugir.";
+                            }
+                            actions = 0;
+                        break;
                     }
-                    break;
-                    case 3:{
-                        if(randNumb() == 10){
-                            endCombat = true;
-                        }
+                }else{
+                    if (buttonsLayout[selectedOption] == itens[0].name){
+                        playerInfoCombat = "Você usou poção de cura";
+                        infoCombat[indexCombat].player.life++;
+                        actions--;
+                        removeItemFromInventory(infoCombat[indexCombat],itens[0].name);
+                    }else if(buttonsLayout[selectedOption] == itens[1].name){
+                        playerInfoCombat = "Você usou Pergaminho de misseis mágicos";
+                        infoCombat[targetIndex].npc.life--;
+                        actions--;
+                        removeItemFromInventory(infoCombat[indexCombat],itens[1].name);
                     }
-                    break;
+                    selectedOption = 0;
+                    exibirItens = false;
+                    for (int i = 0; i < countButtons; i++) {
+                        buttonsLayout[i] = buttons[i];
+                    }
                 }
             }
 
-            if(actions == 0){
-                (indexCombat == 0 ? indexCombat++ : indexCombat--);
+            if (actions == 0) {
+                indexCombat = (indexCombat + 1) % totalCombatants;
                 actions = 2;
                 turn++;
             }
 
-            if(infoCombat[(indexCombat == 0 ? 1 :0)].npc.life <= 0){
-                endCombat = true;
-            }
-        }else{
+        } else {
             if (key == '\r') {
-                if(indexCombat == coutEnemie){
-                    indexCombat = 0;
-                }else{
-                    indexCombat++;
-                }
+                indexCombat = (indexCombat + 1) % totalCombatants;
                 actions = 2;
                 turn++;
             }
         }
     }
+    
+    int playerIndex = -1;
+    for (int i = 0; i < totalCombatants; ++i) {
+        if (!infoCombat[i].isNpc) {
+            playerIndex = i;
+            break;
+        }
+    }
+
+    if (playerIndex != -1) {
+        player.life = infoCombat[playerIndex].player.life;
+
+        for (int i = 0; i < 4; ++i) {
+            player.inventory[i] = infoCombat[playerIndex].player.inventory[i];
+        }
+    }
+
+    clearConsole();
+    cout << padRight(((player.life <= 0) ? "Você foi derrotado!" : "Você venceu o combate!"));
+    cout << padRight("Precione Enter para prosseguir");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    do {
+        key = _getch();
+    }while (key!= '\r');
 }
 
 int main() {
@@ -266,12 +372,14 @@ int main() {
 
     srand(time(0));
 
-    Player player = {3,1,1,{itens[0],itens[1],itens[2],itens[3]}};
+    Player player = {3, 1, 1, {itens[0], itens[1], itens[2], itens[3]}};
     int coutEnemie = 1;
     Npc enemies[coutEnemie];
-    generateEnemies(enemies,coutEnemie);
-    Combatant infoCombat[coutEnemie + 1];
+    generateEnemies(enemies, coutEnemie);
+    Combatant infoCombat[maxCombatants];
     generateInitiatives(infoCombat, enemies, coutEnemie, player);
-    combatMenu(infoCombat,coutEnemie,player);
+    int totalCombatants = coutEnemie + 1;
+
+    combatMenu(infoCombat, totalCombatants, player);
     return 0;
 }
