@@ -1,44 +1,12 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include "GameElements.cpp"
+#include "GameMap.cpp"
 #define GAMEELEMENTS_H
 using namespace std;
-
-
-struct GameElements{
-    char person = char(36);
-    char wall = char(219);
-    char path = ' ';
-    char key = char(42);
-    char potion = char(38);
-    char door = 'D';
-    char trap = char(63);
-
-};
-
-// aquelaCarinha = "( ͡° ͜ʖ ͡°)";
-// dead = "×͜×";
-
-void generateMap(vector<vector<int>> &m, int rows, int cols) {
-
-    for(int i=0; i<rows; i++){
-        for(int j=0; j<cols; j++){
-            if (i == 0 || i == rows - 1 || j == 0 || j == cols - 1) {
-                m[i][j] = 1;
-            } else {
-            if (rand() % 6 == 0) {
-                m[i][j] = 1;
-            } else {
-                m[i][j] = 0;
-            }
-            }
-        }
-    }
-
-}
 
 void Game(){
 
@@ -53,89 +21,82 @@ void Game(){
     GetConsoleCursorInfo(out, &cursorInfo);
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(out, &cursorInfo);
-
-    short int CX=0, CY=0;https://github.com/BrunoRover/Roguelike.git
+    short int CX=0, CY=0;
     COORD coord;
     coord.X = CX;
     coord.Y = CY;
 
     srand(time(NULL));
-    int rows = 10 + rand() % 11;  // Linhas entre 10 e 20
-    int cols = 10 + rand() % 11;  // Colunas entre 10 e 20
+    int rows = 25;
+    int cols = 105;
 
-    vector<vector<int>> m(rows, vector<int>(cols));
-    generateMap(m, rows, cols);
+    GameMap mapa = getRandomMap();
+    VisibleMap vmap;
+    int x = cols / 2, y = rows / 2;
+    char tecla;
 
-    int x=5, y=5;
-    char key;
+    initItems(mapa);
+    vmap.visible[y][x] = true;
+    GameElements elements;
 
-    while(true){
+    while (true) {
+
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-        GameElements elements;
+        checkItems(mapa, x, y);
+        drawMap(mapa, vmap, x, y);
+        // bossRoom(mapFinal,  x, y); //falta implementar a logica do jogo na sala do boss
 
-        for(int i=0; i<rows; i++){
-            for(int j=0; j<cols; j++){
-                if(i == y && j == x){
-                    cout<<char(36);
-                } else {
-                    switch (m[i][j]){
-                        case 0: cout<<elements.path; break;
-                        case 1: cout<<elements.wall; break;
-                        default: cout<<"-";
-                    }
-                }
-            }
-            cout<<"\n";
-        }
-
-         if ( _kbhit() ){
-            key = getch();
-            switch(key)
-            {
+        drawInfo();
+        if (_kbhit()) {
+            tecla = _getch();
+            switch (tecla) {
                 case 72: case 'w':
-                    if (m[y-1][x] == 0) y--;
+                    if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
                 break;
                 case 80: case 's':
-                    if (m[y+1][x] == 0) y++;
+                    if (y < rows-1 && mapa.tiles[y+1][x] == 0) y++;
                 break;
-                case 75:case 'a':
-                    if(m[y][x-1] == 0) x--;
+                case 75: case 'a':
+                    if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
                 break;
                 case 77: case 'd':
-                    if(m[y][x+1] == 0) x++;
+                    if (x < cols-1 && mapa.tiles[y][x+1] == 0) x++;
                 break;
-            }if (key == 27) {  // 27 � o c�digo da tecla ESC
-                cout << "\033c" << "Tecla ESC pressionada, jogo encerrado\n Pressione Enter para voltar ao Menu" << endl;
-                cin.get();
-                cout << "\033c";
-                cout << "> Jogar\n  Como Jogar\n  Itens\n  Sair\n";
-                break;  // Sai do jogo e volta pro menu.
             }
-         }
+        }
+
     }
 }
 
 void ClearConsole() {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(out, &cursorInfo);
     COORD pos = {0, 0};
-    SetConsoleCursorPosition(hConsole, pos);
+    SetConsoleCursorPosition(out, pos);
 }
 
 void instructiongame(){
     ClearConsole();
-    cout << "   Como Jogar \n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Inserir controles adicionais aqui, se necess�rio: por exemplo, Use o mouse para mirar e atacar.";
-    cout << "\n2 Gest�o de Invent�rio:\nA cada novo item encontrado, voc� poder� acess�-lo atrav�s do seu invent�rio, instru��es exemplo: I ou Esc \n";
-    cout << "3 Mec�nica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, voc� ter� que come�ar uma nova partida desde o in�cio.\n";
-    cout << "4 Durante o Jogo: \nVoc� poder� encontrar itens, que te ajudaram a avan�ar de fase e subir de n�vel, o jogo s� finaliza quando voc� matar o boss final.";
-    cout << "\npressione Enter para voltar";
+    cout << "\033c";
+    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Use o 'A' e 'D' para mover o cursor em uma batalha, e 'Enter' para selecionar a ação.\n";
+    cout << "\n2- Ações de Batalha: \nAo iníciar uma batalha, você terá 4 opções: 'Atacar' (gera um ataque no inimigo), 'Defender' (defende do inimigo), 'Fugir' (sai do combate), 'Itens' (abre inventário, para utilizar algum ítem coletado).\n";
+    cout << "\n3- Mecânica da Morte Permanente: \nRoguelike segue o sistema de morte permanente , o que significa que, se você morrer, você terá que recomeçar a partida desde o início.\n";
+    cout << "\nPressione 'Enter' para voltar ao Menu.";
     cin.get();
     cout << "\033c";
     cout << "  Jogar\n> Como Jogar\n  Itens\n  Sair\n";// Sai do jogo e volta pro menu.
 }
  void Itens(){
     cout << "\033c";
-    cout << "pa oca, colher, batata\n";
-    cout << "pressione Enter para voltar";
+    cout << ">> ITENS <<\n\n";
+    cout << "1- Poção de cura: Uma poção feita por um grande alquimista ao usa-la ganha +1 de vida\n\n";
+    cout << "2- Pergaminho de misseis mágicos: Retira 1 de vida do inimigo sem precisar de acerto.\n\n";
+    cout << "3- Espada do sol: Uma espada feita com uma sentelha divina do Deus Tyr. Aumenta +2 de acerto permanente.\n\n";
+    cout << "4- Escudo da pureza: Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente.\n\n";
+    cout << "pressione Enter para voltar ao Menu.";
     cin.get();
     cout << "\033c";
     cout << "  Jogar\n  Como Jogar\n> Itens\n  Sair\n"; // Sai do jogo e volta pro menu.
@@ -143,16 +104,18 @@ void instructiongame(){
 
 const int N_OPCOES = 4;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
-string Opcoes[N_OPCOES] = {"Jogar", "Como Jogar", "Itens", "Sair"};
+string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    "};
 
 void RenderMenu(int MenuItem){ //renderiza o menu, limpando e reescrevendo com "> ".
     _kbhit();
     ClearConsole();
+    cout << "= ROGUELIKE MENU =\n";
+    cout << "|================|\n";
     for (int i = 0; i < N_OPCOES; i++){
             if (MenuItem == i){
-            cout << "> " << Opcoes[i] << endl;
+            cout << "|>> " << Opcoes[i] << " <<|" << endl;
             }else{
-            cout << "  " << Opcoes[i] << endl;
-        }
+            cout << "|   " << Opcoes[i] << "   |" << endl;
+        }   cout << "|================|\n";
     }
 }
