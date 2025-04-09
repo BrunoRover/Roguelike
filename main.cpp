@@ -5,21 +5,19 @@
 #include <ctime>
 #include "GameElements.cpp"  
 #include "GameMap.cpp"
+#include "menu.cpp"
 #include "Combat.cpp"
+
+
 
 using namespace std;
 
-int main() {
+void Game() {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
     cursorInfo.bVisible = false; 
     SetConsoleCursorInfo(out, &cursorInfo);
-
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-    setlocale(LC_ALL, "pt_BR.UTF-8");
-
     short int CX=0, CY=0;
     COORD coord;
     coord.X = CX;
@@ -39,12 +37,10 @@ int main() {
     GameElements elements;  
 
     while (true) {
-
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
         checkItems(mapa, x, y);
         drawMap(mapa, vmap, x, y);
-        // bossRoom(mapFinal,  x, y); //falta implementar a logica do jogo na sala do boss
-
+        
         drawInfo();
         if (_kbhit()) {
             tecla = _getch();
@@ -61,29 +57,16 @@ int main() {
                 case 77: case 'd': 
                     if (x < cols-1 && mapa.tiles[y][x+1] == 0) x++; 
                 break;
-                case 27: return 0;  
+                case 27: return; // Retorna ao menu
             }
         }
-
     }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    // Player player = {3, 1, 1, {itens[0], itens[1], itens[2], itens[3]}};
+        // Player player = {3, 1, 1, {itens[0], itens[1], itens[2], itens[3]}};
     // int coutEnemie = 1;
     // Npc enemies[coutEnemie];
     // generateEnemies(enemies, coutEnemie);
@@ -93,18 +76,48 @@ int main() {
 
     // combatMenu(infoCombat, totalCombatants, player);
     // return 0;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+int main() {
+    bool exit = false;
+    RenderMenu(MenuItem);
+    
+    while (!exit) {
+        if (_kbhit()) {
+            int key = _getch();
+            switch (key) {
+                case 72: case 'w': case 'W':
+                    if (MenuItem == 0){
+                        MenuItem = 3;
+                    } else {
+                        MenuItem -= 1;
+                    }
+                    break;
+                case 80: case 's': case 'S':
+                    if (MenuItem == N_OPCOES-1){
+                        MenuItem = 0;
+                    } else {
+                        MenuItem +=1;
+                    }
+                    break;
+                case 13: case 32:
+                    if (Opcoes[MenuItem] == "  Jogar   ") {
+                        system("cls");
+                        Game();
+                        system("cls");
+                        RenderMenu(MenuItem);
+                    } else if (Opcoes[MenuItem] == "Como Jogar") {
+                        instructiongame();
+                    } else if (Opcoes[MenuItem] == "  Itens   ") {
+                        Itens();
+                    } else if (Opcoes[MenuItem] == "  Sair    ") {
+                        cout << "Saindo...\n";
+                        exit = true;
+                    }
+                    break;
+            }
+            RenderMenu(MenuItem);
+        }
+    }
     return 0;
 }

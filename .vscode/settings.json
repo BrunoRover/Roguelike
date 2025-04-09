@@ -4,6 +4,9 @@
         "*.layout-template": "vue",
         "*.vue": "vue",
         "xstring": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "ostream": "cpp"
     }
 }
