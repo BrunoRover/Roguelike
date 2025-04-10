@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.page-template": "vue",
+        "*.layout-template": "vue",
+        "*.vue": "vue",
+        "xstring": "cpp",
+        "cstdlib": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "ostream": "cpp",
+        "ctime": "cpp"
+    }
+}
