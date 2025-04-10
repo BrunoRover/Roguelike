@@ -8,6 +8,7 @@
 using namespace std;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
+int  kill = 0;
 
 void generateEnemies(Npc enemies[], int quantity) {
     countEnemies = quantity;
@@ -99,7 +100,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
     for (int i = 0; i < totalCombatants; i++) {
         infoCombatant = ((i == indexCombat) ? "> " : "  ");
         infoCombatant += (infoCombat[i].name + " (Iniciativa: " + to_string(infoCombat[i].initiative) + ") Vida: " + to_string((infoCombat[i].isNpc) ? infoCombat[i].npc.life : infoCombat[i].player.life));
-        cout << padRight(infoCombatant);   
+        cout << padRight(infoCombatant);
     }
     cout << "===================================================\n";
 
@@ -182,6 +183,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                     if (infoCombat[targetIndex].npc.life <= 0) {
                                         playerInfoCombat = infoCombat[targetIndex].name + " foi derrotado!";
                                         removeCombatant(infoCombat, totalCombatants, targetIndex);
+                                        kill = kill + 1;
                                         if (indexCombat >= totalCombatants){
                                             indexCombat = 0;
                                         }
@@ -224,7 +226,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                     buttonsLayout[i] = "";
                                 }
                             }
-                            
+
                         }
                         break;
                         case 3:
@@ -270,7 +272,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             }
         }
     }
-    
+
     int playerIndex = -1;
     for (int i = 0; i < totalCombatants; ++i) {
         if (!infoCombat[i].isNpc) {

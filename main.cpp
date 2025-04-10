@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <cstdlib>   
 #include <ctime>
+#include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
 #include "GameElements.cpp"  
 #include "BossMap.cpp"  
 #include "GameMap.cpp"
@@ -11,7 +12,25 @@
 
 using namespace std;
 
+int minutes = 0, seconds = 0, score = 0;
+
+void Score(){
+    score = kill * 5;
+    score += quantityOfItemCollected;
+    score += player.key;
+    score -= minutes / 2;
+}
+
 void Game() {
+
+    cout << "\033c" << "Historia do jogo\n\n" << "Pressione 'Enter' para seguir.\n";
+    cin.get();
+    cout << "\033c" << "mais historia bla bla\n\n" << "Pressione 'Enter' para seguir.\n";;
+    cin.get();
+    cout << "\033c";
+    time_t start = time(nullptr);
+    kill = 0;
+
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
@@ -70,39 +89,49 @@ void Game() {
         if (_kbhit()) {
             tecla = _getch();
             switch (tecla) {
-                case 72: case 'w': // Cima
+                case 72: case 'w': 
                     if (player.inBossRoom) {
                         if (y > 0 && mapFinal.tiles[y-1][x] == 0) y--;
                     } else {
                         if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
                     }
                     break;
-                case 80: case 's': // Baixo
+                case 80: case 's': 
                     if (player.inBossRoom) {
                         if (y < 24 && mapFinal.tiles[y+1][x] == 0) y++;
                     } else {
                         if (y < 24 && mapa.tiles[y+1][x] == 0) y++;
                     }
                     break;
-                case 75: case 'a': // Esquerda
+                case 75: case 'a': 
                     if (player.inBossRoom) {
                         if (x > 0 && mapFinal.tiles[y][x-1] == 0) x--;
                     } else {
                         if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
                     }
                     break;
-                case 77: case 'd': // Direita
+                case 77: case 'd': 
                     if (player.inBossRoom) {
                         if (x < 24 && mapFinal.tiles[y][x+1] == 0) x++;
                     } else {
                         if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
                     }
                     break;
-                case 27: // ESC - Voltar ao menu
+                case 27: 
+                    cout << "\033c" << "Tecla 'ESC' pressionada, jogo encerrado.\n\n";
+                    time_t end = time(nullptr);
+                    double total_seconds = difftime(end, start);
+                    minutes = static_cast<int>(total_seconds) / 60;
+                    seconds = static_cast<int>(total_seconds) % 60;
+                    Score();
+                    cout << "Sua pontuacao foi: " << score << endl << endl;
+                    cout << "Vida: " << player.life << " | Itens Coletados: " << quantityOfItemCollected << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
+                    cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
+                    cout << "Pressione 'Enter' para voltar ao Menu." << endl;
+                    cin.get();
+                    cout << "\033c";
                     return;
-                case 'i': // Tecla I para abrir inventário
-                    // Implemente a abertura do inventário
-                    break;
+                
             }
         }
     }
