@@ -27,12 +27,13 @@ struct GameElements {
     char person = char(36);  
     char wall = char(219);   
     char path = ' '; 
-    char door = 'D';
-    char dark = '.'; 
+    char dark = '.';
+    char door = char(35);
+    char bossMap = char(33); 
     char key = char(42); //*
     char item = char(38); //&
     char trap = char(63); //?
-    char enemy = char(63); //@
+    char enemy = char(64); //@
 };
 
 Item itens[coutMaxItens] = {
@@ -49,6 +50,9 @@ struct Player {
     int key = 0;
     Item inventory[coutMaxItens];
     int inventoryCount = 0;
+    int bossMap = 0; 
+    bool inBossRoom = false;
+    bool bossRoomFirstEntry = true;
 };
 
 struct Npc {

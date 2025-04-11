@@ -1,11 +1,13 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include "GameElements.cpp"  
 
 using namespace std;
 
-GameElements elements;
+//coloquei parte da struct GameElements aqui para não dar erro de redefinição
+char person = char(36);  
+char wall = char(219);   
+char path = ' ';
 
 struct BossMap{
     int tiles[25][25];
@@ -47,9 +49,9 @@ void bossRoom(BossMap& map, int playerX, int playerY){
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if (i == playerY && j == playerX) {
-                cout << elements.person; 
+                cout << person; 
             } else {
-                cout << (map.tiles[i][j] == 1 ? elements.wall : elements.path); 
+                cout << (map.tiles[i][j] == 1 ? wall : path); 
             }
         }
         cout << '\n';

@@ -8,6 +8,7 @@
 using namespace std;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
+int  kill = 0;
 
 void generateEnemies(Npc enemies[]) {
     for (int i = 0; i < countEnemies; i++) {
@@ -200,6 +201,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                     if (infoCombat[targetIndex].npc.life <= 0) {
                                         playerInfoCombat = infoCombat[targetIndex].name + " foi derrotado!";
                                         removeCombatant(infoCombat, totalCombatants, targetIndex);
+                                        kill = kill + 1;
                                         if (indexCombat >= totalCombatants){
                                             indexCombat = 0;
                                         }

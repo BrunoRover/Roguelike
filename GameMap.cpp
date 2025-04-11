@@ -13,7 +13,6 @@ string lastMessage = "";
 GameElements elements;
 Player player; 
 
-
 struct GameMap{
     int tiles[25][105];
 };
@@ -28,6 +27,9 @@ struct GameItem {
     bool collected;
 };
 
+GameItem gameItems[MAX_ITEMS];
+int itemCount = 0;
+
 struct EnemySpawn {
     int id;
     int x;
@@ -38,50 +40,6 @@ struct EnemySpawn {
 
 EnemySpawn enemySpawns[countEnemies];
 int enemieCount = 0;
-
-GameItem gameItems[MAX_ITEMS];
-int itemCount = 0;
-
-//função responsavel por sortear a posição x e y dos itens e a % correspondente do type de cada item 
-void initItems(GameMap& map) {
-    itemCount = 0;
-    for (int i = 1; i < MAX_ITEMS; i++) {
-        int x, y;
-        if (map.tiles[2][2] == 4){
-            gameItems[0].type = elements.key; // Chave
-            gameItems[0].x = 2;
-            gameItems[0].y = 2;
-            gameItems[0].collected = false;
-            map.tiles[2][2] = 0;
-            map.tiles[10][2] = 0;
-        } else if (map.tiles[10][2] == 4){
-            gameItems[0].type = elements.key; // Chave
-            gameItems[0].x = 2;
-            gameItems[0].y = 10;
-            gameItems[0].collected = false;
-            map.tiles[10][2] = 0;
-            map.tiles[2][2] = 0;
-        }
-        do {
-            x = rand() % 105;
-            y = rand() % 25;
-        } while (map.tiles[y][x] != 0); // 1 = parede, 0 = caminho
-        
-        gameItems[i].x = x;
-        gameItems[i].y = y;
-        gameItems[i].collected = false;
-        
-        // 40% item, 40% armadilha
-        int r = rand() % 10;
-        if (r < 5) {
-            gameItems[i].type = elements.item; // item
-        } else {
-            gameItems[i].type = elements.trap; // Armadilha
-        }
-        
-        itemCount++;
-    }
-}
 
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
@@ -116,6 +74,65 @@ void drawEnemie(VisibleMap& vmap) {
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
             cout << gameItems[i].type;
         }
+    }
+}
+
+//função responsavel por sortear a posição x e y dos itens e a % correspondente do type de cada item 
+void initItems(GameMap& map) {
+    itemCount = 0;
+    for (int i = 1; i < MAX_ITEMS; i++) {
+        int x, y;
+        if (map.tiles[2][2] == 4){
+            gameItems[0].type = elements.key; // Chave
+            gameItems[0].x = 2;
+            gameItems[0].y = 2;
+            gameItems[0].collected = false;
+            map.tiles[2][2] = 0;
+            map.tiles[10][2] = 0;
+        } else if (map.tiles[10][2] == 4){
+            gameItems[0].type = elements.key; // Chave
+            gameItems[0].x = 2;
+            gameItems[0].y = 10;
+            gameItems[0].collected = false;
+            map.tiles[10][2] = 0;
+            map.tiles[2][2] = 0;
+        }
+        
+        if (map.tiles[5][87] == 3) {
+            gameItems[itemCount].type = elements.bossMap;
+            gameItems[itemCount].x = 87;  
+            gameItems[itemCount].y = 5;   
+            gameItems[itemCount].collected = false;
+            map.tiles[5][87] = 0;
+            itemCount++;
+        } 
+        else if (map.tiles[21][7] == 3) {
+            gameItems[itemCount].type = elements.bossMap;
+            gameItems[itemCount].x = 7;  
+            gameItems[itemCount].y = 21;  
+            gameItems[itemCount].collected = false;
+            map.tiles[21][7] = 0;
+            itemCount++;
+        }
+
+        do {
+            x = rand() % 105;
+            y = rand() % 25;
+        } while (map.tiles[y][x] != 0); // 1 = parede, 0 = caminho
+        
+        gameItems[i].x = x;
+        gameItems[i].y = y;
+        gameItems[i].collected = false;
+        
+        // 40% item, 40% armadilha
+        int r = rand() % 10;
+        if (r < 5) {
+            gameItems[i].type = elements.item; // item
+        } else {
+            gameItems[i].type = elements.trap; // Armadilha
+        }
+        
+        itemCount++;
     }
 }
 
@@ -321,7 +338,9 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
             } else if (vmap.visible[i][j]) {
                 bool hasItem = false;  // verificar se há um item nesta posição
                 for (int k = 0; k < itemCount; k++) {
-                    if (!gameItems[k].collected && gameItems[k].x == j && gameItems[k].y == i) {
+                    if (!gameItems[k].collected && 
+                        gameItems[k].x == j && 
+                        gameItems[k].y == i) {
                         cout << gameItems[k].type;
                         hasItem = true;
                         break;
@@ -340,7 +359,7 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
 
                     if (map.tiles[i][j] == 1) {
                         cout << elements.wall; // parede
-                    } else if (map.tiles[i][j] == 3) {
+                    } else if (map.tiles[i][j] == 2) {
                         cout << elements.door; // porta
                     } else {
                         cout << elements.path; // caminho
