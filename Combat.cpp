@@ -9,12 +9,30 @@ using namespace std;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
-void generateEnemies(Npc enemies[], int quantity) {
-    countEnemies = quantity;
-    for (int i = 0; i < quantity; i++) {
+void generateEnemies(Npc enemies[]) {
+    for (int i = 0; i < countEnemies; i++) {
         enemies[i] = {false, maxLifeNpc, 0, 0};
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int randNumb() {
     return rand() % 10 + 1;

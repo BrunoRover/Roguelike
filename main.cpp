@@ -32,6 +32,10 @@ void Game() {
     int x = cols / 2, y = rows / 2;
     char tecla;
 
+    Npc enemies[countEnemies];
+    generateEnemies(enemies);
+    initEnemies(mapa);
+
     initItems(mapa);
     vmap.visible[y][x] = true;
     GameElements elements;  
@@ -66,10 +70,7 @@ void Game() {
 
 
 
-        // Player player = {3, 1, 1, {itens[0], itens[1], itens[2], itens[3]}};
-    // int coutEnemie = 1;
-    // Npc enemies[coutEnemie];
-    // generateEnemies(enemies, coutEnemie);
+    // 
     // Combatant infoCombat[maxCombatants];
     // generateInitiatives(infoCombat, enemies, coutEnemie, player);
     // int totalCombatants = coutEnemie + 1;

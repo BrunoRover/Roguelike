@@ -13,6 +13,7 @@ string lastMessage = "";
 GameElements elements;
 Player player; 
 
+
 struct GameMap{
     int tiles[25][105];
 };
@@ -26,6 +27,17 @@ struct GameItem {
     char type;
     bool collected;
 };
+
+struct EnemySpawn {
+    int id;
+    int x;
+    int y;
+    char type;
+    bool active;
+};
+
+EnemySpawn enemySpawns[countEnemies];
+int enemieCount = 0;
 
 GameItem gameItems[MAX_ITEMS];
 int itemCount = 0;
@@ -59,15 +71,51 @@ void initItems(GameMap& map) {
         gameItems[i].y = y;
         gameItems[i].collected = false;
         
-        // 40% poção, 40% armadilha, 20% chave
+        // 40% item, 40% armadilha
         int r = rand() % 10;
         if (r < 5) {
-            gameItems[i].type = elements.item; // Poção
+            gameItems[i].type = elements.item; // item
         } else {
             gameItems[i].type = elements.trap; // Armadilha
         }
         
         itemCount++;
+    }
+}
+
+//função responsavel por sortear a posição x e y dos inimigos
+void initEnemies(GameMap& map) {
+    int enemieCount = 0;
+
+    for (int i = 0; i < countEnemies; i++) {
+        int x, y;
+
+        do {
+            x = rand() % 105;
+            y = rand() % 25;
+        } while (map.tiles[y][x] != 0); // 1 = parede, 0 = caminho
+        
+        enemySpawns[i].x = x;
+        enemySpawns[i].y = y;
+        enemySpawns[i].active = true;
+        enemySpawns[i].type = elements.enemy;
+        enemySpawns[i].id = enemieCount;
+        
+        enemieCount++;
+    }
+
+}
+
+//função responsavel mostrar inimigo 
+void drawEnemie(VisibleMap& vmap) {
+    for (int i = 0; i < countEnemies; i++) {
+        if (!enemySpawns[i].active && vmap.visible[enemySpawns[i].y][enemySpawns[i].x]) { 
+            COORD coord;
+            coord.X = (SHORT)gameItems[i].x;
+            coord.Y = (SHORT)gameItems[i].y;
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+            cout << gameItems[i].type;
+        }
     }
 }
 
@@ -101,13 +149,26 @@ void checkItems(GameMap& map, int playerX, int playerY) {
 
             // item para o inventario
             if (gameItems[i].type == elements.item) { 
+                int newIndex = rand() % (coutMaxItens - 1);
+                Item newItem = itens[newIndex];
+                bool haveItem = false;
 
-                // if (player.life < 5) {
-                //     player.life += 1; 
-                //     lastMessage = "Você pegou uma poção! +1 de vida!";
-                // } else {
-                //     lastMessage = "Você já está com vida máxima!";
-                // }
+                for (int i = 0; i <= player.inventoryCount; i++){
+                    if(player.inventory[i].buffId == newItem.buffId){
+                        haveItem = true;
+                        break;
+                    }
+                }
+                
+                if(haveItem) {
+                    lastMessage = "Você achou o item " + newItem.name + ",mas já tem esse item!";
+                    break;
+                }else{
+                    player.inventory[player.inventoryCount] = newItem;
+                    player.inventoryCount++;
+                    lastMessage = "Você achou o item " + newItem.name + ",ele foi adicionado ao seu inventário!";
+                }
+
             }
 
             // logica para as armadilhas
@@ -260,15 +321,23 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
             } else if (vmap.visible[i][j]) {
                 bool hasItem = false;  // verificar se há um item nesta posição
                 for (int k = 0; k < itemCount; k++) {
-                    if (!gameItems[k].collected && 
-                        gameItems[k].x == j && 
-                        gameItems[k].y == i) {
+                    if (!gameItems[k].collected && gameItems[k].x == j && gameItems[k].y == i) {
                         cout << gameItems[k].type;
                         hasItem = true;
                         break;
                     }
                 }
+
                 if (!hasItem) {
+                    bool hasEnemy = false;
+                    for (int e = 0; e < countEnemies; e++) {
+                        if (enemySpawns[e].active && enemySpawns[e].x == j && enemySpawns[e].y == i) {
+                            cout << '@'; // Inimigo visível
+                            hasEnemy = true;
+                            break;
+                        }
+                    }
+
                     if (map.tiles[i][j] == 1) {
                         cout << elements.wall; // parede
                     } else if (map.tiles[i][j] == 3) {
@@ -285,5 +354,6 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
     }
 
     drawItems(vmap); //função responsavel mostrar itens sendo invocada na hora de desenhar o mapa
+    drawEnemie(vmap); //função responsavel mostrar inimigo sendo invocada na hora de desenhar o mapa
 }
 

@@ -7,12 +7,13 @@ const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
 const int baseLength = 100;
+const int countEnemies = 5;
+const int coutMaxItens = 4;
 
 string addInfoCombat = "";
 string playerInfoCombat = "";
 int turn = 0;
 bool exibirItens = false;
-int countEnemies = 0;
 
 struct Item {
     int buffId;
@@ -31,9 +32,10 @@ struct GameElements {
     char key = char(42); //*
     char item = char(38); //&
     char trap = char(63); //?
+    char enemy = char(63); //@
 };
 
-Item itens[4] = {
+Item itens[coutMaxItens] = {
     {1, "Poção de cura", "Uma poção feita por um grande alquimista ao usa-la ganha +1 de vida", true, 1},
     {2, "Pergaminho de misseis mágicos", "Retira 1 de vida do inimigo sem precisar de acerto", true, 1},
     {3, "Espada do sol", "Uma espada feita com uma sentelha divina do Deus Tyr. Aumenta +2 de acerto permanente", false, 2},
@@ -45,7 +47,8 @@ struct Player {
     int attack = 1;
     int defense = 0;
     int key = 0;
-    Item inventory[4];
+    Item inventory[coutMaxItens];
+    int inventoryCount = 0;
 };
 
 struct Npc {
