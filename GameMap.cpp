@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iostream>
 #include "GameElements.cpp"
+#include "Combat.cpp"
 using namespace std;
 
 #define MAX_ITEMS 10
@@ -38,14 +39,14 @@ struct EnemySpawn {
     bool active;
 };
 
-EnemySpawn enemySpawns[countEnemies];
+EnemySpawn enemySpawns[countVisibleEnemies];
 int enemieCount = 0;
 
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
     int enemieCount = 0;
 
-    for (int i = 0; i < countEnemies; i++) {
+    for (int i = 0; i < countVisibleEnemies; i++) {
         int x, y;
 
         do {
@@ -66,7 +67,7 @@ void initEnemies(GameMap& map) {
 
 //função responsavel mostrar inimigo 
 void drawEnemie(VisibleMap& vmap) {
-    for (int i = 0; i < countEnemies; i++) {
+    for (int i = 0; i < countVisibleEnemies; i++) {
         if (!enemySpawns[i].active && vmap.visible[enemySpawns[i].y][enemySpawns[i].x]) { 
             COORD coord;
             coord.X = (SHORT)gameItems[i].x;
@@ -234,7 +235,15 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                         }
                     }
                 } 
+            }//logica para o inimigo
+            else if(gameItems[i].type == elements.enemy){
+                clearConsole();
+                Combatant infoCombat[maxCombatants];
+                generateInitiatives(infoCombat, enemies, countEnemies, player);
+                int totalCombatants = countEnemies + 1;
+                combatMenu(infoCombat, totalCombatants, player);
             }
+
         }
     }
 }
@@ -349,7 +358,7 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
 
                 if (!hasItem) {
                     bool hasEnemy = false;
-                    for (int e = 0; e < countEnemies; e++) {
+                    for (int e = 0; e < countVisibleEnemies; e++) {
                         if (enemySpawns[e].active && enemySpawns[e].x == j && enemySpawns[e].y == i) {
                             cout << '@'; // Inimigo visível
                             hasEnemy = true;

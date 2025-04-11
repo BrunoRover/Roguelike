@@ -7,8 +7,9 @@ const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
 const int baseLength = 100;
-const int countEnemies = 5;
+const int countVisibleEnemies = 5;
 const int coutMaxItens = 4;
+int  kill = 0;
 
 string addInfoCombat = "";
 string playerInfoCombat = "";
@@ -79,3 +80,6 @@ void clearConsole() {
     COORD coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+const int countEnemies = 1;
+Npc enemies[countEnemies];

@@ -8,14 +8,13 @@
 #include "BossMap.cpp"  
 #include "GameMap.cpp"
 #include "menu.cpp"
-#include "Combat.cpp"
 
 using namespace std;
 
 int minutes = 0, seconds = 0, score = 0;
 
 void Score(){
-    score = kill * 5;
+    // score = kill * 5;
     score += quantityOfItemCollected;
     score += player.key;
     score -= minutes / 2;
@@ -29,7 +28,7 @@ void Game() {
     cin.get();
     cout << "\033c";
     time_t start = time(nullptr);
-    kill = 0;
+    // kill = 0;
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -51,7 +50,6 @@ void Game() {
     int bossX = 12, bossY = 12;
     char tecla;
     
-    Npc enemies[countEnemies];
     generateEnemies(enemies);
     initEnemies(mapa);
 
@@ -144,7 +142,6 @@ void Game() {
 
 
 
-        // Player player = {3, 1, 1, {itens[0], itens[1], itens[2], itens[3]}};
     // int coutEnemie = 1;
     // Npc enemies[coutEnemie];
     // generateEnemies(enemies, coutEnemie);

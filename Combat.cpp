@@ -6,9 +6,9 @@
 #include <conio.h>
 #include "GameElements.cpp"
 using namespace std;
+// int  kill = 0;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
-int  kill = 0;
 
 void generateEnemies(Npc enemies[]) {
     for (int i = 0; i < countEnemies; i++) {
