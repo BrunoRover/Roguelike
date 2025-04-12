@@ -22,9 +22,11 @@ void Score(){
 
 void Game() {
 
-    cout << "\033c" << "Historia do jogo\n\n" << "Pressione 'Enter' para seguir.\n";
+    cout << pagina1;
     cin.get();
-    cout << "\033c" << "mais historia bla bla\n\n" << "Pressione 'Enter' para seguir.\n";;
+    clearConsole();
+    cout << "\033c";
+    cout << pagina2;
     cin.get();
     cout << "\033c";
     time_t start = time(nullptr);
@@ -79,7 +81,7 @@ void Game() {
             if (x == 12 && y == 12) {
                 // Iniciar combate com o boss
                 // lógica de combate aqui
-                lastMessage = "Você encontrou o Chefão! Prepare-se para lutar!";
+                lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
             }
         } else {
             checkItems(mapa, x, y);
@@ -154,6 +156,8 @@ void Game() {
 }
 
 int main() {
+    // SetConsoleOutputCP(CP_UTF8);
+    // SetConsoleCP(CP_UTF8);
     bool exit = false;
     RenderMenu(MenuItem);
     

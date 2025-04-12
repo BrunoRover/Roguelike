@@ -16,25 +16,6 @@ void generateEnemies(Npc enemies[]) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int randNumb() {
     return rand() % 10 + 1;
 }
@@ -76,7 +57,7 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
 
 void actionNpc(Combatant& npc, Combatant& player) {
     if (npc.npc.life <= (maxLifeNpc / 2) && !npc.npc.healing) {
-        addInfoCombat = "O inimigo se curou com uma poção.";
+        addInfoCombat = "O inimigo se curou com uma pocao.";
         npc.npc.life++;
         npc.npc.healing = true;
     } else {
@@ -120,7 +101,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
         infoCombatant += (infoCombat[i].name + " (Iniciativa: " + to_string(infoCombat[i].initiative) + ") Vida: " + to_string((infoCombat[i].isNpc) ? infoCombat[i].npc.life : infoCombat[i].player.life));
         cout << padRight(infoCombatant);   
     }
-    cout << "===================================================\n";
+    cout << padRight("====================================================");
 
     if (!infoCombat[indexCombat].isNpc) {
         cout << padRight("Use A (Esquerda) e D (Direita) para selecionar | ENTER para confirmar");
@@ -136,15 +117,35 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
         }
         cout << padRight(buttonsCombat);
         cout << padRight(playerInfoCombat);
-        cout << padRight("=================================================");
+        cout << padRight("====================================================");
         cout << padRight(addInfoCombat);
     } else {
         cout << padRight(addInfoCombat);
-        cout << padRight("======================================================");
+        cout << padRight("====================================================");
         cout << padRight(playerInfoCombat);
         cout << padRight("Precione ENTER para prosseguir o turno");
-        cout << padRight("=================================================");
+        cout << padRight("====================================================");
     }
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
+    cout << padRight("");
 }
 
 void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
@@ -160,7 +161,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         if (infoCombat[indexCombat].isNpc) {
             actionNpc(infoCombat[indexCombat], infoCombat[0]);
         } else {
-            addInfoCombat = "Você tem " + to_string(actions) + " ações restantes.";
+            addInfoCombat = "Voce tem " + to_string(actions) + " ações restantes.";
         }
 
         displayCombatInterface(selectedOption, indexCombat, infoCombat, totalCombatants,buttonsLayout);
@@ -194,7 +195,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                             if (infoCombat[targetIndex].isNpc) {
                                 bool onHit = makeAttack(infoCombat[indexCombat].player.attack, infoCombat[targetIndex].npc.defense);
                                 if (onHit) {
-                                    playerInfoCombat = "Você acertou o ataque";
+                                    playerInfoCombat = "Voce acertou o ataque";
                                     infoCombat[targetIndex].npc.life--;
 
                                     // Verifica se o NPC morreu
@@ -212,7 +213,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                     }
 
                                 } else {
-                                    playerInfoCombat = "Você errou o ataque";
+                                    playerInfoCombat = "Voce errou o ataque";
                                 }
                             }
                             actions--;
@@ -220,7 +221,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         break;
                         case 1:
                             infoCombat[indexCombat].player.defense++;
-                            playerInfoCombat = "Você aumentou sua defesa";
+                            playerInfoCombat = "Voce aumentou sua defesa";
                             actions--;
                             break;
                         case 2:{
@@ -251,19 +252,19 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                             if (randNumb() == 10){
                                 endCombat = true;
                             }else{
-                                playerInfoCombat = "Você não conseguiu fugir.";
+                                playerInfoCombat = "Voce nao conseguiu fugir.";
                             }
                             actions = 0;
                         break;
                     }
                 }else{
                     if (buttonsLayout[selectedOption] == itens[0].name){
-                        playerInfoCombat = "Você usou poção de cura";
+                        playerInfoCombat = "Voce usou pocao de cura";
                         infoCombat[indexCombat].player.life++;
                         actions--;
                         removeItemFromInventory(infoCombat[indexCombat],itens[0].name);
                     }else if(buttonsLayout[selectedOption] == itens[1].name){
-                        playerInfoCombat = "Você usou Pergaminho de misseis mágicos";
+                        playerInfoCombat = "Voce usou Pergaminho de misseis magicos";
                         infoCombat[targetIndex].npc.life--;
                         actions--;
                         removeItemFromInventory(infoCombat[indexCombat],itens[1].name);
@@ -308,7 +309,8 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     }
 
     clearConsole();
-    cout << padRight(((player.life <= 0) ? "Você foi derrotado!" : "Você venceu o combate!"));
+
+    cout << padRight(((player.life <= 0) ? "Voce foi derrotado!" : "Voce venceu o combate!"));
     cout << padRight("Precione Enter para prosseguir");
     cout << padRight("");
     cout << padRight("");
@@ -320,5 +322,8 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     do {
         key = _getch();
     }while (key!= '\r');
+
+    clearConsole();
+    system("cls");
 }
 

@@ -32,15 +32,12 @@ GameItem gameItems[MAX_ITEMS];
 int itemCount = 0;
 
 struct EnemySpawn {
-    int id;
-    int x;
-    int y;
+    int id, x, y;
     char type;
     bool active;
 };
 
 EnemySpawn enemySpawns[countVisibleEnemies];
-int enemieCount = 0;
 
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
@@ -68,12 +65,12 @@ void initEnemies(GameMap& map) {
 //função responsavel mostrar inimigo 
 void drawEnemie(VisibleMap& vmap) {
     for (int i = 0; i < countVisibleEnemies; i++) {
-        if (!enemySpawns[i].active && vmap.visible[enemySpawns[i].y][enemySpawns[i].x]) { 
+        if (enemySpawns[i].active && vmap.visible[enemySpawns[i].y][enemySpawns[i].x]) {
             COORD coord;
-            coord.X = (SHORT)gameItems[i].x;
-            coord.Y = (SHORT)gameItems[i].y;
+            coord.X = (SHORT)enemySpawns[i].x;
+            coord.Y = (SHORT)enemySpawns[i].y;
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-            cout << gameItems[i].type;
+            cout << enemySpawns[i].type;
         }
     }
 }
@@ -162,7 +159,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             // base para o game over, FALTA TERMINAR 
             if(player.life <= 0) {
                 gameOver = true; 
-                lastMessage = "Você morreu!";
+                lastMessage = "Voce morreu!";
             } 
 
             // item para o inventario
@@ -179,14 +176,13 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                 }
                 
                 if(haveItem) {
-                    lastMessage = "Você achou o item " + newItem.name + ",mas já tem esse item!";
+                    lastMessage = "Voce achou o item " + newItem.name + ",mas ja tem esse item!";
                     break;
                 }else{
                     player.inventory[player.inventoryCount] = newItem;
                     player.inventoryCount++;
-                    lastMessage = "Você achou o item " + newItem.name + ",ele foi adicionado ao seu inventário!";
+                    lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
                 }
-
             }
 
             // logica para as armadilhas
@@ -196,7 +192,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                 switch(effect) {
                     case 0: 
                         player.life -= 1;
-                        lastMessage = "Você pisou numa armadilha! -1 de vida!";
+                        lastMessage = "Voce pisou numa armadilha! -1 de vida!";
                         break;
                     case 1: 
                         player.life -= 2;
@@ -207,14 +203,14 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                         lastMessage = "Armadilha inofensiva! +1 de vida!";
                         break;
                     case 3: 
-                        lastMessage = "Você escapou da armadilha sem dano!";
+                        lastMessage = "Voce escapou da armadilha sem dano!";
                         break;
                     case 4: 
                         if (player.key > 0) {
                             player.key -= 1;
-                            lastMessage = "A armadilha fez você perder uma chave!";
+                            lastMessage = "A armadilha fez Voce perder uma chave!";
                         } else {
-                            lastMessage = "A armadilha tentou pegar uma chave, mas você não tem nenhuma!";
+                            lastMessage = "A armadilha tentou pegar uma chave, mas Voce não tem nenhuma!";
                         }
                         break;
                 }
@@ -222,7 +218,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             // logica para as chaves 
             else if (gameItems[i].type == elements.key) {
                 player.key += 1;
-                lastMessage = "Você pegou uma chave! +1 chave!";
+                lastMessage = "Voce pegou uma chave! +1 chave!";
 
                 // logica para abrir as portas quando tiver chave
                 if(player.key > 0) {
@@ -230,20 +226,28 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                         for (int x = 0; x < 105; x++) {
                             if (map.tiles[y][x] == 3) { // 3 = porta
                                 map.tiles[y][x] = 0;   // transforma em caminho
-                                lastMessage = "Você abriu as portas! Você pode passar pelo icone: #";
+                                lastMessage = "Voce abriu as portas! Voce pode passar pelo icone: #";
                             }
                         }
                     }
                 } 
             }//logica para o inimigo
-            else if(gameItems[i].type == elements.enemy){
-                clearConsole();
-                Combatant infoCombat[maxCombatants];
-                generateInitiatives(infoCombat, enemies, countEnemies, player);
-                int totalCombatants = countEnemies + 1;
-                combatMenu(infoCombat, totalCombatants, player);
-            }
 
+        }
+    }
+
+    for (int i = 0; i < countVisibleEnemies; i++) {
+        if (enemySpawns[i].active && enemySpawns[i].x == playerX && enemySpawns[i].y == playerY) {
+            clearConsole();
+            Combatant infoCombat[maxCombatants];
+            generateInitiatives(infoCombat, enemies, countEnemies, player);
+            int totalCombatants = countEnemies + 1;
+            combatMenu(infoCombat, totalCombatants, player);
+    
+            // Marca o inimigo como derrotado
+            enemySpawns[i].active = false;
+            lastMessage = "Voce derrotou um inimigo!";
+            break;
         }
     }
 }
@@ -360,18 +364,20 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
                     bool hasEnemy = false;
                     for (int e = 0; e < countVisibleEnemies; e++) {
                         if (enemySpawns[e].active && enemySpawns[e].x == j && enemySpawns[e].y == i) {
-                            cout << '@'; // Inimigo visível
+                            cout << enemySpawns[i].type; // Inimigo visível
                             hasEnemy = true;
                             break;
                         }
                     }
 
-                    if (map.tiles[i][j] == 1) {
-                        cout << elements.wall; // parede
-                    } else if (map.tiles[i][j] == 2) {
-                        cout << elements.door; // porta
-                    } else {
-                        cout << elements.path; // caminho
+                    if(!hasEnemy){
+                        if (map.tiles[i][j] == 1) {
+                            cout << elements.wall; // parede
+                        } else if (map.tiles[i][j] == 2) {
+                            cout << elements.door; // porta
+                        } else {
+                            cout << elements.path; // caminho
+                        }
                     }
                 }
             } else {
