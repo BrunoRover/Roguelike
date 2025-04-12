@@ -148,23 +148,35 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
     cout << padRight("");
 }
 
-void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
+bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
-    bool endCombat = false;
+    bool isWin = false;
+    bool leaveCombat = false;
     int indexCombat = 0;
+    int indexPlayer = 0;
     int actions = 2;
-    int targetIndex = (indexCombat == 0) ? 1 : 0;
+    int targetIndex = 0;
     string buttonsLayout[countButtons];
     copy(begin(buttons), end(buttons), begin(buttonsLayout));
-    while (!endCombat && player.life > 0 && totalCombatants > 1) {
+    while (!leaveCombat && !isWin && player.life > 0 && totalCombatants > 1) {
+        targetIndex = -1;
+        for (int i = 0; i < totalCombatants; i++) {
+            if (infoCombat[i].isNpc && i != indexCombat) {
+                targetIndex = i;
+            }else if(!infoCombat[i].isNpc && i != indexCombat){
+                indexPlayer = i;
+            }
+        }
+
         if (infoCombat[indexCombat].isNpc) {
-            actionNpc(infoCombat[indexCombat], infoCombat[0]);
+            actionNpc(infoCombat[indexCombat], infoCombat[indexPlayer]);
         } else {
             addInfoCombat = "Voce tem " + to_string(actions) + " ações restantes.";
         }
 
         displayCombatInterface(selectedOption, indexCombat, infoCombat, totalCombatants,buttonsLayout);
+        playerInfoCombat = "";
 
         key = _getch();
         if (!infoCombat[indexCombat].isNpc) {
@@ -207,9 +219,9 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                             indexCombat = 0;
                                         }
                                         if (totalCombatants == 1){
-                                            endCombat = true;
+                                            isWin = true;
                                         }
-                                        continue;
+                                        break;
                                     }
 
                                 } else {
@@ -250,8 +262,9 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         break;
                         case 3:
                             if (randNumb() == 10){
-                                endCombat = true;
-                            }else{
+                                leaveCombat = true;
+                                playerInfoCombat = "Voce fugiu do combate!";
+                            } else {
                                 playerInfoCombat = "Voce nao conseguiu fugir.";
                             }
                             actions = 0;
@@ -308,9 +321,19 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         }
     }
 
-    clearConsole();
+    string strCombat = "";
+    playerInfoCombat = "";
 
-    cout << padRight(((player.life <= 0) ? "Voce foi derrotado!" : "Voce venceu o combate!"));
+    if (player.life <= 0) {
+        strCombat = "Voce foi derrotado!";
+    } else if (leaveCombat) {
+        strCombat = "Voce fugiu do combate!";
+    } else {
+        strCombat = "Voce venceu o combate!";
+    }
+
+    clearConsole();
+    cout << padRight(strCombat);
     cout << padRight("Precione Enter para prosseguir");
     cout << padRight("");
     cout << padRight("");
@@ -325,5 +348,7 @@ void combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
     clearConsole();
     system("cls");
+    
+    return leaveCombat;
 }
 

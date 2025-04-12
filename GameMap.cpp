@@ -242,10 +242,9 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             Combatant infoCombat[maxCombatants];
             generateInitiatives(infoCombat, enemies, countEnemies, player);
             int totalCombatants = countEnemies + 1;
-            combatMenu(infoCombat, totalCombatants, player);
     
             // Marca o inimigo como derrotado
-            enemySpawns[i].active = false;
+            enemySpawns[i].active = combatMenu(infoCombat, totalCombatants, player);
             lastMessage = "Voce derrotou um inimigo!";
             break;
         }
