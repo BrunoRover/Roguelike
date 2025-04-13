@@ -188,8 +188,11 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         displayCombatInterface(selectedOption, indexCombat, infoCombat, totalCombatants,buttonsLayout);
         playerInfoCombat = "";
 
-        key = _getch();
         if (!infoCombat[indexCombat].isNpc) {
+            do {
+                key = _getch();
+            } while (key != 'a' && key != 'A' && key != 'd' && key != 'D' && key != '\r');
+
             if (actions == 2) {
                 playerInfoCombat = "";
                 infoCombat[indexCombat].player.defense = player.defense;
@@ -307,6 +310,10 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             }
 
         } else {
+            do {
+                key = _getch();
+            } while (key != '\r');
+            
             if (key == '\r') {
                 indexCombat = (indexCombat + 1) % totalCombatants;
                 actions = 2;
