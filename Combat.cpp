@@ -10,21 +10,25 @@ using namespace std;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
+//usado para gerear os inimigos para o combate
 void generateEnemies(Npc enemies[]) {
     for (int i = 0; i < countEnemies; i++) {
         enemies[i] = {false, maxLifeNpc, 0, 0};
     }
 }
 
+//funcao usada de base para gerar numero aleatorio ate 10
 int randNumb() {
     return rand() % 10 + 1;
 }
 
+// funcao usada para tentar fazer o ataque com base nos dados
 bool makeAttack(int attack, int defend) {
     int valueAttack = randNumb() + attack - defend;
     return (valueAttack > 5);
 }
 
+//muda a ordenação do combate
 void sortCombatants(Combatant combatants[], int totalCombatants) {
     for (int i = 0; i < totalCombatants - 1; i++) {
         for (int j = 0; j < totalCombatants - i - 1; j++) {
@@ -37,6 +41,7 @@ void sortCombatants(Combatant combatants[], int totalCombatants) {
     }
 }
 
+//gera a iniciativa de todos combatentes incluindo o jogador
 void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
     int totalCombatants = coutEnemie + 1;
 
@@ -55,6 +60,7 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     sortCombatants(infoCombat, totalCombatants);
 }
 
+//acoes automaticas do npc
 void actionNpc(Combatant& npc, Combatant& player) {
     if (npc.npc.life <= (maxLifeNpc / 2) && !npc.npc.healing) {
         addInfoCombat = "O inimigo se curou com uma pocao.";
@@ -71,6 +77,7 @@ void actionNpc(Combatant& npc, Combatant& player) {
     }
 }
 
+//retira o npc que foi morto
 void removeCombatant(Combatant infoCombat[], int& totalCombatants, int indexToRemove) {
     for (int i = indexToRemove; i < totalCombatants - 1; ++i) {
         infoCombat[i] = infoCombat[i + 1];
@@ -78,6 +85,7 @@ void removeCombatant(Combatant infoCombat[], int& totalCombatants, int indexToRe
     totalCombatants--;
 }
 
+//retira o item do inventario ao ser usado
 void removeItemFromInventory(Combatant& combatant, string item) {
     int indexitem = 0;
     for (int i = 0; i <= 3; ++i) {
@@ -92,6 +100,7 @@ void removeItemFromInventory(Combatant& combatant, string item) {
     combatant.player.inventory[3] = Item{};
 }
 
+// renderiza o combate
 void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoCombat[], int totalCombatants,string buttonsLayout[countButtons]) {
     clearConsole();
     string infoCombatant = "";
@@ -148,6 +157,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
     cout << padRight("");
 }
 
+//toda logica de como e executado o combate acoes ordenacao e fim
 bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
@@ -172,7 +182,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         if (infoCombat[indexCombat].isNpc) {
             actionNpc(infoCombat[indexCombat], infoCombat[indexPlayer]);
         } else {
-            addInfoCombat = "Voce tem " + to_string(actions) + " ações restantes.";
+            addInfoCombat = "Voce tem " + to_string(actions) + " acoes restantes.";
         }
 
         displayCombatInterface(selectedOption, indexCombat, infoCombat, totalCombatants,buttonsLayout);

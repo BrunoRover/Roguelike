@@ -45,7 +45,7 @@ string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    
 void RenderMenu(int MenuItem){ //renderiza o menu, limpando e reescrevendo com "> ".
     _kbhit();
     ClearConsole();
-    cout << "= ROGUELIKE MENU =\n";
+    cout << "= " + titleGame + " =\n";
     cout << "|================|\n";
     for (int i = 0; i < N_OPCOES; i++){
             if (MenuItem == i){

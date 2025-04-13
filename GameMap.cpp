@@ -6,7 +6,6 @@
 #include "Combat.cpp"
 using namespace std;
 
-#define MAX_ITEMS 10
 int quantityOfItemCollected = 0;
 bool gameOver = false;
 string lastMessage = "";
@@ -36,6 +35,9 @@ struct EnemySpawn {
     char type;
     bool active;
 };
+
+int enemyMoveCounter = 0;
+const int enemyMoveDelay = 7;
 
 EnemySpawn enemySpawns[countVisibleEnemies];
 
@@ -72,6 +74,38 @@ void drawEnemie(VisibleMap& vmap) {
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
             cout << enemySpawns[i].type;
         }
+    }
+}
+
+//funcao para movimentar todos inimigos do mapa
+void moveEnemiesRandomly(GameMap& map) {
+    if (enemyMoveCounter >= enemyMoveDelay) {
+        for (int i = 0; i < countVisibleEnemies; i++) {
+            if (!enemySpawns[i].active) continue;
+    
+            int dx[8] = { -1, -1, -1,  0, 1, 1, 1,  0 };
+            int dy[8] = { -1,  0,  1,  1, 1, 0, -1, -1 };
+    
+            int currentX = enemySpawns[i].x;
+            int currentY = enemySpawns[i].y;
+    
+            // Tentativas máximas para se mover
+            for (int attempts = 0; attempts < 8; attempts++) {
+                int dir = rand() % 8;
+                int newX = currentX + dx[dir];
+                int newY = currentY + dy[dir];
+    
+                // Verifica limites e se é um caminho válido (0)
+                if (newX >= 0 && newX < 105 && newY >= 0 && newY < 25 && map.tiles[newY][newX] == 0) {
+                    enemySpawns[i].x = newX;
+                    enemySpawns[i].y = newY;
+                    break;
+                }
+            }
+        }
+        enemyMoveCounter = 0;
+    } else {
+        enemyMoveCounter++;
     }
 }
 
@@ -210,7 +244,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                             player.key -= 1;
                             lastMessage = "A armadilha fez Voce perder uma chave!";
                         } else {
-                            lastMessage = "A armadilha tentou pegar uma chave, mas Voce não tem nenhuma!";
+                            lastMessage = "A armadilha tentou pegar uma chave, mas Voce nao tem nenhuma!";
                         }
                         break;
                 }
@@ -257,9 +291,9 @@ void drawInfo() {
     coord.X = 0;
     coord.Y = 26; 
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    cout << "Vida: " << player.life << " | Itens Coletados: " << quantityOfItemCollected << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
+    cout << padRight("Vida: " + to_string(player.life) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + "/" + to_string(MAX_ITEMS) + " | Chaves Coletadas: " + to_string(player.key));
     cout << "\n";
-    cout << "Mensagens: " << lastMessage << endl;  
+    cout << padRight("Mensagens: " + lastMessage);  
 }
 
 //função responsavel por sortear a matriz de jogo
@@ -363,7 +397,7 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
                     bool hasEnemy = false;
                     for (int e = 0; e < countVisibleEnemies; e++) {
                         if (enemySpawns[e].active && enemySpawns[e].x == j && enemySpawns[e].y == i) {
-                            cout << enemySpawns[i].type; // Inimigo visível
+                            cout << enemySpawns[e].type; // Inimigo visível
                             hasEnemy = true;
                             break;
                         }

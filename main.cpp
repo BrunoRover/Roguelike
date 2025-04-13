@@ -84,7 +84,9 @@ void Game() {
                 lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
             }
         } else {
+            moveEnemiesRandomly(mapa);
             checkItems(mapa, x, y);
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
             drawMap(mapa, vmap, x, y);
         }
         
@@ -129,7 +131,7 @@ void Game() {
                     seconds = static_cast<int>(total_seconds) % 60;
                     Score();
                     cout << "Sua pontuacao foi: " << score << endl << endl;
-                    cout << "Vida: " << player.life << " | Itens Coletados: " << quantityOfItemCollected << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
+                    cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
                     cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
                     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
                     cin.get();
@@ -139,20 +141,6 @@ void Game() {
             }
         }
     }
-
-
-
-
-
-    // int coutEnemie = 1;
-    // Npc enemies[coutEnemie];
-    // generateEnemies(enemies, coutEnemie);
-    // Combatant infoCombat[maxCombatants];
-    // generateInitiatives(infoCombat, enemies, coutEnemie, player);
-    // int totalCombatants = coutEnemie + 1;
-
-    // combatMenu(infoCombat, totalCombatants, player);
-    // return 0;
 }
 
 int main() {

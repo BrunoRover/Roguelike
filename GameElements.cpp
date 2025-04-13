@@ -2,6 +2,7 @@
 using namespace std;
 #include <string>
 #include <windows.h>
+#define MAX_ITEMS 4
 
 const int countButtons = 4;
 const int maxLifeNpc = 2;
@@ -76,6 +77,8 @@ string padRight(const string& text) {
     return text + string(baseLength - text.length(), ' ') + "\n";
 }
 
+string titleGame = "ROGUELIKE MENU";
+
 void clearConsole() {
     COORD coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -87,7 +90,7 @@ string pagina1 =
 "  Na manha dourada de um dia calmo, Voce aproveitava um piquenique nas colinas\n"
 "  verdejantes da Planicie de Miralys, ao lado da estonteante princesa Lina.\n"
 "\n"
-"  Era um momento perfeito. As flores dançavam com o vento, os pássaros cantavam,\n"
+"  Era um momento perfeito. As flores dancavam com o vento, os passaros cantavam,\n"
 "  e o sorriso dela fazia o tempo desacelerar...\n"
 "\n"
 "  Mas a paz foi traida pela escuridao.\n"
