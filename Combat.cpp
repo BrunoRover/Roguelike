@@ -77,6 +77,7 @@ void actionNpc(Combatant& npc, Combatant& player) {
         bool onHit = makeAttack(npc.npc.attack, player.player.defense);
         if (onHit) {
             player.player.life--;
+            if (player.player.life < 0) player.player.life = 0;
             addInfoCombat = "O inimigo acertou um ataque.";
         } else {
             addInfoCombat = "O inimigo errou o ataque.";
@@ -177,7 +178,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     string buttonsLayout[countButtons];
     copy(begin(buttons), end(buttons), begin(buttonsLayout));
     while (!leaveCombat && !isWin && player.life > 0 && totalCombatants > 1) {
-        if (infoCombat[0].player.life <= 0){
+        if (infoCombat[indexPlayer].player.life <= 0){
             cout << "\033c";
             cout << "VOCE FOI DERROTADO";
             player.life = 0;
@@ -196,13 +197,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
         if (infoCombat[indexCombat].isNpc) {
             actionNpc(infoCombat[indexCombat], infoCombat[indexPlayer]);
-            if (infoCombat[0].player.life <= 0){
+            if (infoCombat[indexPlayer].player.life <= 0) {
+                infoCombat[indexPlayer].player.life = 0; // Evita vida negativa
                 cout << "\033c";
                 cout << "VOCE FOI DERROTADO";
                 player.life = 0;
                 cin.get();
                 gameOver = true;
-                return 0;
+                break; // Sai do while e finaliza combate
             }
         } else {
             addInfoCombat = "Voce tem " + to_string(actions) + " acoes restantes.";
@@ -347,7 +349,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                 turn++;
             }
         }
-        if (infoCombat[0].player.life <= 0){
+        if (infoCombat[indexPlayer].player.life <= 0){
             cout << "\033c";
             cout << "VOCE FOI DERROTADO";
             player.life = 0;
