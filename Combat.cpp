@@ -11,9 +11,15 @@ using namespace std;
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
 //usado para gerear os inimigos para o combate
-void generateEnemies(Npc enemies[]) {
-    for (int i = 0; i < countEnemies; i++) {
-        enemies[i] = {false, maxLifeNpc, 0, 0};
+void generateEnemies(Npc enemies[],bool isBoss = false) {
+    if(isBoss){
+        for (int i = 0; i < countEnemies; i++) {
+            enemies[i] = {false, (maxLifeNpc * 2), 2, 2,true};
+        }
+    }else{
+        for (int i = 0; i < countEnemies; i++) {
+            enemies[i] = {false, maxLifeNpc, 0, 0,false};
+        }
     }
 }
 
@@ -274,13 +280,17 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         }
                         break;
                         case 3:
-                            if (randNumb() == 10){
-                                leaveCombat = true;
-                                playerInfoCombat = "Voce fugiu do combate!";
-                            } else {
-                                playerInfoCombat = "Voce nao conseguiu fugir.";
+                            if(infoCombat[targetIndex].npc.isBoss){
+                                playerInfoCombat = "Nao e possivel fugir do boss!";
+                            }else{
+                                if (randNumb() == 10){
+                                    leaveCombat = true;
+                                    playerInfoCombat = "Voce fugiu do combate!";
+                                } else {
+                                    playerInfoCombat = "Voce nao conseguiu fugir.";
+                                }
+                                actions = 0;
                             }
-                            actions = 0;
                         break;
                     }
                 }else{
@@ -340,12 +350,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
     string strCombat = "";
     playerInfoCombat = "";
-
+    int returnCombat = 0;
     if (player.life <= 0) {
         strCombat = "Voce foi derrotado!";
     } else if (leaveCombat) {
+        returnCombat = 1;
         strCombat = "Voce fugiu do combate!";
     } else {
+        returnCombat = 2;
         strCombat = "Voce venceu o combate!";
     }
 
@@ -366,6 +378,6 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     clearConsole();
     system("cls");
     
-    return leaveCombat;
+    return returnCombat;
 }
 

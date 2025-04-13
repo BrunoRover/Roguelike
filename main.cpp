@@ -1,11 +1,11 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <cstdlib>   
+#include <cstdlib>
 #include <ctime>
 #include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
-#include "GameElements.cpp"  
-#include "BossMap.cpp"  
+#include "GameElements.cpp"
+#include "BossMap.cpp"
 #include "GameMap.cpp"
 #include "menu.cpp"
 
@@ -35,7 +35,7 @@ void Game() {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
-    cursorInfo.bVisible = false; 
+    cursorInfo.bVisible = false;
     SetConsoleCursorInfo(out, &cursorInfo);
     short int CX=0, CY=0;
     COORD coord;
@@ -43,7 +43,7 @@ void Game() {
     coord.Y = CY;
 
     srand(time(NULL));
-    int rows = 25;  
+    int rows = 25;
     int cols = 105;
 
     GameMap mapa = getRandomMap();
@@ -51,18 +51,18 @@ void Game() {
     int x = cols / 2, y = rows / 2;
     int bossX = 12, bossY = 12;
     char tecla;
-    
+
     generateEnemies(enemies);
     initEnemies(mapa);
 
     initItems(mapa);
     vmap.visible[y][x] = true;
-    GameElements elements;  
-    
+    GameElements elements;
+
 
     while (true) {
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    
+
         if (player.bossMap && !player.inBossRoom) {
             // Transição para a sala do boss
             player.inBossRoom = true;
@@ -76,12 +76,33 @@ void Game() {
                 system("cls");
                 player.bossRoomFirstEntry = false;
             }
-
+            bool isWin = false;
             bossRoom(mapFinal, x, y);
-            if (x == 12 && y == 12) {
+            lastMessage = "x=" + to_string(x) + "y=" + to_string(y) + to_string(mapFinal.tiles[(y / 10)][x]);
+
+            if (mapFinal.tiles[y][x] == bossIcon && !isWin && !gameOver) {
                 // Iniciar combate com o boss
                 // lógica de combate aqui
                 lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
+                clearConsole();
+                Combatant infoCombatBoss[2];
+                int countEnemiesBoss = 1;
+                Npc enemiesBoss[countEnemiesBoss];
+                generateEnemies(enemiesBoss,true);
+                generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
+                int totalCombatantsBoss = countEnemiesBoss + 1;
+                int returnCombat = combatMenu(infoCombatBoss, totalCombatantsBoss, player);
+    
+                if(returnCombat == 0){
+                    player.life = 0;
+                    gameOver = true; 
+                    lastMessage = "Voce morreu!";
+                }else if (returnCombat == 2){
+                    lastMessage = "Voce derrotou o Boss";
+                    isWin = true;
+                    //colocar aq algo para vitoria final
+                }
+                mapFinal.tiles[y][x] = 0;
             }
         } else {
             moveEnemiesRandomly(mapa);
@@ -89,41 +110,41 @@ void Game() {
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
             drawMap(mapa, vmap, x, y);
         }
-        
-        
+
+
         drawInfo();
         if (_kbhit()) {
             tecla = _getch();
             switch (tecla) {
-                case 72: case 'w': 
+                case 72: case 'w':
                     if (player.inBossRoom) {
-                        if (y > 0 && mapFinal.tiles[y-1][x] == 0) y--;
+                        if (y > 0 && mapFinal.tiles[y-1][x] != 1) y--;
                     } else {
                         if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
                     }
                     break;
-                case 80: case 's': 
+                case 80: case 's':
                     if (player.inBossRoom) {
-                        if (y < 24 && mapFinal.tiles[y+1][x] == 0) y++;
+                        if (y < 24 && mapFinal.tiles[y+1][x] != 1) y++;
                     } else {
                         if (y < 24 && mapa.tiles[y+1][x] == 0) y++;
                     }
                     break;
-                case 75: case 'a': 
+                case 75: case 'a':
                     if (player.inBossRoom) {
-                        if (x > 0 && mapFinal.tiles[y][x-1] == 0) x--;
+                        if (x > 0 && mapFinal.tiles[y][x-1] != 1) x--;
                     } else {
                         if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
                     }
                     break;
-                case 77: case 'd': 
+                case 77: case 'd':
                     if (player.inBossRoom) {
-                        if (x < 24 && mapFinal.tiles[y][x+1] == 0) x++;
+                        if (x < 24 && mapFinal.tiles[y][x+1] != 1) x++;
                     } else {
                         if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
                     }
                     break;
-                case 27: 
+                case 27:
                     cout << "\033c" << "Tecla 'ESC' pressionada, jogo encerrado.\n\n";
                     time_t end = time(nullptr);
                     double total_seconds = difftime(end, start);
@@ -137,7 +158,7 @@ void Game() {
                     cin.get();
                     cout << "\033c";
                     return;
-                
+
             }
         }
     }
@@ -148,7 +169,7 @@ int main() {
     // SetConsoleCP(CP_UTF8);
     bool exit = false;
     RenderMenu(MenuItem);
-    
+
     while (!exit) {
         if (_kbhit()) {
             int key = _getch();

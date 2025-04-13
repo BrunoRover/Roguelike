@@ -8,6 +8,7 @@ using namespace std;
 char person = char(36);  
 char wall = char(219);   
 char path = ' ';
+char bossIcon = char(2);
 
 struct BossMap{
     int tiles[25][25];
@@ -19,7 +20,7 @@ BossMap mapFinal = {
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,bossIcon,0,0,0,0,0,0,0,0,0,0,0,1,
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
     1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -50,6 +51,8 @@ void bossRoom(BossMap& map, int playerX, int playerY){
         for (int j = 0; j < cols; ++j) {
             if (i == playerY && j == playerX) {
                 cout << person; 
+            }else if(map.tiles[i][j] != 1 && map.tiles[i][j] != 0){
+                cout << bossIcon; 
             } else {
                 cout << (map.tiles[i][j] == 1 ? wall : path); 
             }
