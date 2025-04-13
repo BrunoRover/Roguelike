@@ -291,8 +291,32 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             int totalCombatants = countEnemies + 1;
     
             // Marca o inimigo como derrotado
-            enemySpawns[i].active = combatMenu(infoCombat, totalCombatants, player);
+            int returnCombat = combatMenu(infoCombat, totalCombatants, player);
             lastMessage = "Voce derrotou um inimigo!";
+
+            if(returnCombat == 0){
+                player.life = 0;
+                gameOver = true; 
+                lastMessage = "Voce morreu!";
+            }else if (returnCombat == 1){
+                const int mapHeight = 25;
+                const int mapWidth = 105;
+    
+                int newx = 0;
+                int newy = 0;
+                do {
+                    newx = rand() % mapWidth;
+                    newy = rand() % mapHeight;  // garante newy < 25
+                } while (map.tiles[newy][newx] != 0);
+    
+                enemySpawns[i].x = newx;
+                enemySpawns[i].y = newy;
+    
+                lastMessage = "Voce fugiu do inimigo!";
+            }else if (returnCombat == 2){
+                lastMessage = "Voce derotou o inimigo";
+                enemySpawns[i].active = false;
+            }
             break;
         }
     }

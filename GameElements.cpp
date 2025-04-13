@@ -36,6 +36,7 @@ struct GameElements {
     char item = char(38); //&
     char trap = char(63); //?
     char enemy = char(64); //@
+    char bossIcon = char(2);
 };
 
 Item itens[coutMaxItens] = {
@@ -62,6 +63,7 @@ struct Npc {
     int life;
     int attack;
     int defense;
+    bool isBoss;
 };
 
 struct Combatant {
@@ -85,7 +87,7 @@ void clearConsole() {
 }
 
 string pagina1 =
-"  Voce e Leaon, um jovem nobre, cavaleiro da luz, e fiel devoto do deus Helm.\n"
+"  Voce e Leon, um jovem nobre, cavaleiro da luz, e fiel devoto do deus Helm.\n"
 "\n"
 "  Na manha dourada de um dia calmo, Voce aproveitava um piquenique nas colinas\n"
 "  verdejantes da Planicie de Miralys, ao lado da estonteante princesa Lina.\n"
