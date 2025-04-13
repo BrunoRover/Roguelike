@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "GameElements.cpp"
 using namespace std;
 
 void ClearConsole() {
@@ -18,24 +19,23 @@ void ClearConsole() {
 void instructiongame(){
     ClearConsole();
     cout << "\033c";
-    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Use o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a ação.\n";
-    cout << "\n2- Ações de Batalha: \nAo iníciar uma batalha, você terá 4 opções: 'Atacar' (gera um ataque no inimigo), 'Defender' (defende do inimigo), 'Fugir' (sai do combate), 'Itens' (abre inventário, para utilizar algum ítem coletado).\n";
-    cout << "\n3- Mecânica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, você terá que recomeçar a partida desde o início.\n";
+    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Use o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a acao.\n";
+    cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: 'Atacar' (gera um ataque no inimigo), 'Defender' (defende do inimigo), 'Fugir' (sai do combate), 'Itens' (abre inventario, para utilizar algum item coletado).\n";
+    cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, voce tera que recomecar a partida desde o inicio.\n";
     cout << "\nPressione 'Enter' para voltar ao Menu.";
     cin.get();
-    cout << "\033c";
-    cout << "  Jogar\n> Como Jogar\n  Itens\n  Sair\n";// Sai do jogo e volta pro menu.
+    cout << "\033c"; // Sai do jogo e volta pro menu.
 }
- void Itens(){
+
+void Itens(){
     cout << "\033c";
-    cout << ">> ITENS <<\n\n";
-    cout << "1- Poção de Vida:\nAo consumir a poção, você recebe 2 Vidas.\n\n";
-    cout << "2- Poção de Força:\nAo consumir  a poção, você recebe força, causando mais dano ao inimigo.\n\n";
-    cout << "3- escudo:\nAo enfiar o escudo no cu, você recebe mais defesa.\n\n";
+    cout << ">>>>> ITENS <<<<<\n\n";
+    for (int i=0;i<4;i++){
+    cout << itens[i].name << ": " << itens[i].description << endl << endl;
+    }
     cout << "pressione Enter para voltar ao Menu.";
     cin.get();
     cout << "\033c";
-    cout << "  Jogar\n  Como Jogar\n> Itens\n  Sair\n"; // Sai do jogo e volta pro menu.
  }
 
 const int N_OPCOES = 4;

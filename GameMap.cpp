@@ -7,7 +7,6 @@
 using namespace std;
 
 int quantityOfItemCollected = 0;
-bool gameOver = false;
 string lastMessage = "";
 
 GameElements elements;
@@ -38,12 +37,12 @@ struct EnemySpawn {
 
 int enemyMoveCounter = 0;
 const int enemyMoveDelay = 7;
+int enemieCount = 0;
 
 EnemySpawn enemySpawns[countVisibleEnemies];
 
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
-    int enemieCount = 0;
 
     for (int i = 0; i < countVisibleEnemies; i++) {
         int x, y;

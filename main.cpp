@@ -12,9 +12,32 @@
 using namespace std;
 
 int minutes = 0, seconds = 0, score = 0;
+bool isWin = false;
+
+void Reset() {
+    gameOver = false;
+    isWin = false;
+    player.life = 5;
+    player.attack = 1;
+    player.defense = 0;
+    player.key = 0;
+    player.inventoryCount = 0;
+    player.bossMap = 0;
+    player.inBossRoom = false;
+    player.bossRoomFirstEntry = true;
+    player.inventory[0];
+    itemCount = 0;
+    minutes = 0;
+    seconds = 0; 
+    score = 0;
+    enemieCount = 0;
+    gameItems[MAX_ITEMS];
+    quantityOfItemCollected = 0;
+    mapFinal.tiles[5][12] = bossIcon;
+}
 
 void Score(){
-    // score = kill * 5;
+    score = kill * 5;
     score += quantityOfItemCollected;
     score += player.key;
     score -= minutes / 2;
@@ -30,7 +53,7 @@ void Game() {
     cin.get();
     cout << "\033c";
     time_t start = time(nullptr);
-    // kill = 0;
+    kill = 0;
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -60,7 +83,10 @@ void Game() {
     GameElements elements;
 
 
-    while (true) {
+    while (!gameOver && !isWin) {
+        if (player.life == 0){
+            gameOver = true;
+        }
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
         if (player.bossMap && !player.inBossRoom) {
@@ -76,11 +102,13 @@ void Game() {
                 system("cls");
                 player.bossRoomFirstEntry = false;
             }
-            bool isWin = false;
             bossRoom(mapFinal, x, y);
             lastMessage = "x=" + to_string(x) + "y=" + to_string(y) + to_string(mapFinal.tiles[(y / 10)][x]);
 
             if (mapFinal.tiles[y][x] == bossIcon && !isWin && !gameOver) {
+                if (player.life == 0){
+                    gameOver = true;
+                    }
                 // Iniciar combate com o boss
                 // lógica de combate aqui
                 lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
@@ -96,13 +124,21 @@ void Game() {
                 if(returnCombat == 0){
                     player.life = 0;
                     gameOver = true; 
-                    lastMessage = "Voce morreu!";
+                    lastMessage = "Voce morreu!\n\n";
+                    cout << "Tente novamente, quem sabe na proxima...";
+                    cin.get();
+                    cout << "\033c";
                 }else if (returnCombat == 2){
-                    lastMessage = "Voce derrotou o Boss";
+                    lastMessage = "VOCE DERROTOU TO BOSS\n\n";
+                    cout << "VITÓRIA, apos derrotar o boss, voce encontra a Lina e consegue fugir da montanha...\n\n";
+                    cin.get();
                     isWin = true;
-                    //colocar aq algo para vitoria final
+                    cout << "\033c";
                 }
                 mapFinal.tiles[y][x] = 0;
+                if (mapFinal.tiles[y][x] == 0){
+                    isWin = true;
+                }
             }
         } else {
             moveEnemiesRandomly(mapa);
@@ -162,6 +198,17 @@ void Game() {
             }
         }
     }
+    cout << "\033c";
+    time_t end = time(nullptr);
+    double total_seconds = difftime(end, start);
+    minutes = static_cast<int>(total_seconds) / 60;
+    seconds = static_cast<int>(total_seconds) % 60;
+    Score();
+    cout << "Sua pontuacao foi: " << score << endl << endl;
+    cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
+    cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
+    cout << "Pressione 'Enter' para voltar ao Menu." << endl;
+    cin.get();
 }
 
 int main() {
@@ -191,6 +238,7 @@ int main() {
                 case 13: case 32:
                     if (Opcoes[MenuItem] == "  Jogar   ") {
                         system("cls");
+                        Reset();
                         Game();
                         system("cls");
                         RenderMenu(MenuItem);

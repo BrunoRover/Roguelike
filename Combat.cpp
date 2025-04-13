@@ -7,6 +7,7 @@
 #include "GameElements.cpp"
 using namespace std;
 // int  kill = 0;
+bool gameOver = false;
 
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
@@ -176,6 +177,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     string buttonsLayout[countButtons];
     copy(begin(buttons), end(buttons), begin(buttonsLayout));
     while (!leaveCombat && !isWin && player.life > 0 && totalCombatants > 1) {
+        if (infoCombat[0].player.life <= 0){
+            cout << "\033c";
+            cout << "VOCE FOI DERROTADO";
+            player.life = 0;
+            cin.get();
+            gameOver = true;
+            return 0;
+        }
         targetIndex = -1;
         for (int i = 0; i < totalCombatants; i++) {
             if (infoCombat[i].isNpc && i != indexCombat) {
@@ -187,6 +196,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
         if (infoCombat[indexCombat].isNpc) {
             actionNpc(infoCombat[indexCombat], infoCombat[indexPlayer]);
+            if (infoCombat[0].player.life <= 0){
+                cout << "\033c";
+                cout << "VOCE FOI DERROTADO";
+                player.life = 0;
+                cin.get();
+                gameOver = true;
+                return 0;
+            }
         } else {
             addInfoCombat = "Voce tem " + to_string(actions) + " acoes restantes.";
         }
@@ -198,7 +215,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             do {
                 key = _getch();
             } while (key != 'a' && key != 'A' && key != 'd' && key != 'D' && key != '\r');
-
+            
             if (actions == 2) {
                 playerInfoCombat = "";
                 infoCombat[indexCombat].player.defense = player.defense;
@@ -329,6 +346,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                 actions = 2;
                 turn++;
             }
+        }
+        if (infoCombat[0].player.life <= 0){
+            cout << "\033c";
+            cout << "VOCE FOI DERROTADO";
+            player.life = 0;
+            cin.get();
+            gameOver = true;
+            return 0;
         }
     }
     
