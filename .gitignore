@@ -1,0 +1,33 @@
+# Ignorar arquivos temporários do sistema
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+main.o
+main.exe
+
+# Ignorar binários e compilados
+*.exe
+*.o
+*.out
+*.a
+*.so
+
+# Ignorar diretórios de build
+/build/
+/bin/
+/obj/
+
+# Ignorar configurações de IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln
+
+# Ignorar pastas específicas
+dist/
+output/
+node_modules/
+.env
