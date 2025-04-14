@@ -4,6 +4,7 @@ using namespace std;
 #include <windows.h>
 #define MAX_ITEMS 4
 
+
 const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
@@ -36,7 +37,7 @@ struct GameElements {
     char item = char(38); //&
     char trap = char(63); //?
     char enemy = char(64); //@
-    char bossIcon = char(2);
+    char bossIcon = char(37);
 };
 
 Item itens[coutMaxItens] = {

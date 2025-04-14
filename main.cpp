@@ -14,6 +14,7 @@ using namespace std;
 int minutes = 0, seconds = 0, score = 0;
 bool isWin = false;
 
+//reseta "todas" as variaveis
 void Reset() {
     gameOver = false;
     isWin = false;
@@ -34,8 +35,9 @@ void Reset() {
     gameItems[MAX_ITEMS];
     quantityOfItemCollected = 0;
     mapFinal.tiles[5][12] = bossIcon;
+    lastMessage = "";
 }
-
+// calcula o score
 void Score(){
     score = kill * 5;
     score += quantityOfItemCollected;
@@ -43,8 +45,28 @@ void Score(){
     score -= minutes / 2;
 }
 
+//função que mostra a pontuação em geral do player no final
+void drawInfoFinal(time_t start) {
+    // Calcula o tempo total de jogo
+    cout << "\033c";
+    time_t end = time(nullptr);
+    double total_seconds = difftime(end, start);
+    minutes = static_cast<int>(total_seconds) / 60;
+    seconds = static_cast<int>(total_seconds) % 60;
+
+    // Mostra pontuação final
+    Score();
+    cout << "Sua pontuacao foi: " << score << endl << endl;
+    cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
+    cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
+
+    //cout << "Pressione 'Enter' para voltar ao Menu." << endl;
+    //cin.get();
+}
+
 void Game() {
 
+    //pagina1 e pagina2 é referente a história do jogo
     cout << pagina1;
     cin.get();
     clearConsole();
@@ -52,7 +74,7 @@ void Game() {
     cout << pagina2;
     cin.get();
     cout << "\033c";
-    time_t start = time(nullptr);
+    time_t start = time(nullptr); //inicia o tempo de jogo
     kill = 0;
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -69,20 +91,24 @@ void Game() {
     int rows = 25;
     int cols = 105;
 
+    //sorteia uma das matrizes de jogo
     GameMap mapa = getRandomMap();
     VisibleMap vmap;
     int x = cols / 2, y = rows / 2;
     int bossX = 12, bossY = 12;
     char tecla;
 
+    //gerear os inimigos para o combate
     generateEnemies(enemies);
+    //sortear a posição x e y dos inimigos
     initEnemies(mapa);
 
+    //inicia o itens
     initItems(mapa);
     vmap.visible[y][x] = true;
     GameElements elements;
 
-
+    //logica do jogo 
     while (!gameOver && !isWin) {
         if (player.life == 0){
             gameOver = true;
@@ -103,14 +129,12 @@ void Game() {
                 player.bossRoomFirstEntry = false;
             }
             bossRoom(mapFinal, x, y);
-            lastMessage = "x=" + to_string(x) + "y=" + to_string(y) + to_string(mapFinal.tiles[(y / 10)][x]);
 
             if (mapFinal.tiles[y][x] == bossIcon && !isWin && !gameOver) {
                 if (player.life == 0){
                     gameOver = true;
-                    }
-                // Iniciar combate com o boss
-                // lógica de combate aqui
+                }
+                // Iniciar combate com o boss, lógica de combate aqui
                 lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
                 clearConsole();
                 Combatant infoCombatBoss[2];
@@ -128,9 +152,9 @@ void Game() {
                     cout << "Tente novamente, quem sabe na proxima...";
                     cin.get();
                     cout << "\033c";
-                }else if (returnCombat == 2){
-                    lastMessage = "VOCE DERROTOU TO BOSS\n\n";
-                    cout << "VITÓRIA, apos derrotar o boss, voce encontra a Lina e consegue fugir da montanha...\n\n";
+                }else if (returnCombat == 1){
+                    lastMessage = "VOCE DERROTOU O BOSS\n\n";
+                    cout << "VITORIA, apos derrotar o boss, voce encontra a Lina e consegue fugir da montanha...\n\n";
                     cin.get();
                     isWin = true;
                     cout << "\033c";
@@ -141,16 +165,16 @@ void Game() {
                 }
             }
         } else {
-            moveEnemiesRandomly(mapa);
-            checkItems(mapa, x, y);
+            moveEnemiesRandomly(mapa); //funcao para movimentar todos inimigos do mapa
+            checkItems(mapa, x, y); //funcao responsavel por coletar o item pelo jogador
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
-            drawMap(mapa, vmap, x, y);
+            drawMap(mapa, vmap, x, y); //responsavel por desenhar o mapa e atualizar visibilidade
         }
 
-
-        drawInfo();
+        drawInfo(); // mostra as informações do jogador e do jogo em tempo real
         if (_kbhit()) {
             tecla = _getch();
+            //lógica de movimentação do jogador na sala do boss
             switch (tecla) {
                 case 72: case 'w':
                     if (player.inBossRoom) {
@@ -181,43 +205,30 @@ void Game() {
                     }
                     break;
                 case 27:
-                    cout << "\033c" << "Tecla 'ESC' pressionada, jogo encerrado.\n\n";
-                    time_t end = time(nullptr);
-                    double total_seconds = difftime(end, start);
-                    minutes = static_cast<int>(total_seconds) / 60;
-                    seconds = static_cast<int>(total_seconds) % 60;
-                    Score();
-                    cout << "Sua pontuacao foi: " << score << endl << endl;
-                    cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
-                    cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
+                    clearConsole();
+                    gameOver = true; 
+                    drawInfoFinal(start); 
                     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
                     cin.get();
-                    cout << "\033c";
-                    return;
-
+                    
             }
         }
     }
-    cout << "\033c";
-    time_t end = time(nullptr);
-    double total_seconds = difftime(end, start);
-    minutes = static_cast<int>(total_seconds) / 60;
-    seconds = static_cast<int>(total_seconds) % 60;
-    Score();
-    cout << "Sua pontuacao foi: " << score << endl << endl;
-    cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
-    cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
+    clearConsole();
+    gameOver = true; 
+    drawInfoFinal(start); 
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
     cin.get();
+    
 }
 
 int main() {
-    // SetConsoleOutputCP(CP_UTF8);
-    // SetConsoleCP(CP_UTF8);
     bool exit = false;
     RenderMenu(MenuItem);
 
+    //enquanto o jogo não for encerrado, continua no menu
     while (!exit) {
+        
         if (_kbhit()) {
             int key = _getch();
             switch (key) {
@@ -238,12 +249,12 @@ int main() {
                 case 13: case 32:
                     if (Opcoes[MenuItem] == "  Jogar   ") {
                         system("cls");
-                        Reset();
-                        Game();
+                        Reset(); //toda vez que reiniciar o jogo, reseta as variaveis para evitar bugs e lixo de memoria
+                        Game(); //inicia o jogo
                         system("cls");
                         RenderMenu(MenuItem);
                     } else if (Opcoes[MenuItem] == "Como Jogar") {
-                        instructiongame();
+                        instructiongame(); 
                     } else if (Opcoes[MenuItem] == "  Itens   ") {
                         Itens();
                     } else if (Opcoes[MenuItem] == "  Sair    ") {

@@ -15,7 +15,7 @@ string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 void generateEnemies(Npc enemies[],bool isBoss = false) {
     if(isBoss){
         for (int i = 0; i < countEnemies; i++) {
-            enemies[i] = {false, (maxLifeNpc * 2), 2, 2,true};
+            enemies[i] = {false, (maxLifeNpc * 2) , 2, 2,true};
         }
     }else{
         for (int i = 0; i < countEnemies; i++) {
@@ -200,9 +200,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             if (infoCombat[indexPlayer].player.life <= 0) {
                 infoCombat[indexPlayer].player.life = 0; // Evita vida negativa
                 cout << "\033c";
-                cout << "VOCE FOI DERROTADO";
                 player.life = 0;
-                cin.get();
                 gameOver = true;
                 break; // Sai do while e finaliza combate
             }

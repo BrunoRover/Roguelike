@@ -8,7 +8,7 @@ using namespace std;
 char person = char(36);  
 char wall = char(219);   
 char path = ' ';
-char bossIcon = char(2);
+char bossIcon = char(37);
 
 struct BossMap{
     int tiles[25][25];

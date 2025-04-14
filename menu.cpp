@@ -6,6 +6,7 @@
 #include "GameElements.cpp"
 using namespace std;
 
+//função que limpa a tela do console
 void ClearConsole() {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -16,6 +17,7 @@ void ClearConsole() {
     SetConsoleCursorPosition(out, pos);
 }
 
+// função que mostra para o jogardo como jogar
 void instructiongame(){
     ClearConsole();
     cout << "\033c";
@@ -27,6 +29,7 @@ void instructiongame(){
     cout << "\033c"; // Sai do jogo e volta pro menu.
 }
 
+// função que mostra os itens para o jogador
 void Itens(){
     cout << "\033c";
     cout << ">>>>> ITENS <<<<<\n\n";
@@ -42,7 +45,8 @@ const int N_OPCOES = 4;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
 string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    "};
 
-void RenderMenu(int MenuItem){ //renderiza o menu, limpando e reescrevendo com "> ".
+//renderiza o menu, limpando e reescrevendo com "> ".
+void RenderMenu(int MenuItem){ 
     _kbhit();
     ClearConsole();
     cout << "= " + titleGame + " =\n";
