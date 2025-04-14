@@ -284,15 +284,17 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             generateInitiatives(infoCombat, enemies, countEnemies, player);
             int totalCombatants = countEnemies + 1;
     
-            // Marca o inimigo como derrotado
+            // inicia o combate contra o inimigo
             int returnCombat = combatMenu(infoCombat, totalCombatants, player);
             lastMessage = "Voce derrotou um inimigo!";
-
+            //verifica o retorno do combate
             if(returnCombat == 0){
+                //avisa a morte e termina o jogo
                 player.life = 0;
                 gameOver = true; 
                 lastMessage = "Voce morreu!";
             }else if (returnCombat == 1){
+                //caso de fulga teleporta o inimigo para outra parte do mapa
                 const int mapHeight = 25;
                 const int mapWidth = 105;
     
@@ -308,6 +310,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
     
                 lastMessage = "Voce fugiu do inimigo!";
             }else if (returnCombat == 2){
+                //caso de vitoria
                 lastMessage = "Voce derotou o inimigo";
                 enemySpawns[i].active = false;
             }
