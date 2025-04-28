@@ -1,0 +1,92 @@
+item tocha (aumenta a zona de visão)
+
+bibilhotecas para tempo:
+ctime
+crono
+
+
+1 - O jogo deve ter 3 níveis de dificuldade
+
+fácil - (vidas 5, inimigos 4,max itens 7)
+médio - (vidas 4, inimigos 7,max itens 5)
+difícil - (vidas 3,inimigos 10,max itens 3)
+
+2 - O Jogo deve ter ao menos 3 fases diferentes
+
+usar a quantidade de inimigos para gerar por fase
+gerar itens por fase (não esquecer a chave)
+
+3 - Ter o tempo em tela e ser levado em considerado no sistema de pontuações
+
+colocar na parte superior o tempo fixo e contando, fazer isso em uma função separada
+
+4 - O jogo deve conter um menu funcional, com:
+
+Deve haver uma opção explicando o sistema de pontuação (deve considerar: 
+movimentos, vidas utilizadas, itens coletados etc.)
+
+5 - O jogo dever ser salvo em um arquivo e exibido em ordem da melhor pontuação:
+salvar os scores em um arquivo ao dar game over no jogo ou ganhar o jogo
+
+6 - O Jogo deve ter ao menos 7 itens diferentes
+adicionar mais itens e funcionabilidades 
+
+7 - As dificuldades devem alterar as probabiliddes do jogo:
+
+mods padrões em vez de ter 0 de acerto e defesa padrão deve ter:
+
+fácil - 0
+médio - +1
+difícil - +2
+
+8 - Deve haver ao menos 3 tipos diferente de inimigo
+
+colocar um tipo de inimigo cada um tendo um atributo diferente, colocar uma cor diferente para cada inimigo
+sendo os inimigos : mago, ladino, guerreiro 
+cada um muda a descrição do ataque e os status base
+
+9 - O uso de itens deve alterar o visual do personagem (Mudar a cor, caracter) 
+
+na struct do item adicionar "cor"
+cada item ativo quando usado muda a cor do personagem ao final do combate
+
+10 - Deve aparecer na interface os itens pegos:
+
+mostrar na parte de cima a quantidade de itens coletados
+quando for pressionado determinado botão mostra todos os itens coletado (inventario)
+
+11 - O personagem deve passar de nível e ter a opção para distribuir pontos:
+
+da um determinado xp ao matar cada inimigo 
+fazer a cada numero de xp subir de nível
+
+12 - O personagem deve ter um sistema de pontos para distribuir:
+
+deixar distribuir vida + 1 (aumentando vida máxima e atual, colocar direto na struct player)
+deixar distribuir defesa + 1 (aumentar a defesa permanente, colocar na struct player)
+deixar distribuir ataque  + 1 (aumentar o ataque permanente, colocar na struct player)
+
+verificar se ao finalizar o combate não rezeta os buffs permanentes
+
+12 + 1 - O personagem deve ganhar XP ao pegar itens, ao matar monstro
+
+ganhar pouco xp ao pegar item e ganhar mais item ao matar monstros
+
+14 - O Jogo deve ter uma opção para jogar sozinho e ter a capacidade de ganhar:
+
+ao iniciar o jogo e selecionar a dificuldade escolher humano ou maquina
+
+caso de maquina andar em direção da chave e no combate sempre bater
+
+
+
+
+
+
+
+
+
+
+
+
+
