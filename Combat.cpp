@@ -50,7 +50,7 @@ void sortCombatants(Combatant combatants[], int totalCombatants) {
 }
 
 //gera a iniciativa de todos combatentes incluindo o jogador
-void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player,typeNpc typeCombat) {
     int totalCombatants = coutEnemie + 1;
 
     infoCombat[0].name = "Jogador";
@@ -59,12 +59,11 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     infoCombat[0].player = player;
 
     for (int i = 1; i < totalCombatants; i++) {
-        int typeCombat = rand() % 3;
         infoCombat[i].npc = enemies[i - 1];
-        infoCombat[i].name = ("Inimigo " + to_string(i) + "(" + typesNpc[typeCombat].type + ")");
-        infoCombat[i].npc.life += typesNpc[typeCombat].bonusLife;
-        infoCombat[i].npc.attack += typesNpc[typeCombat].bonusAttack;
-        infoCombat[i].npc.defense += typesNpc[typeCombat].bonusDefense;
+        infoCombat[i].name = ("Inimigo " + to_string(i) + "(" + typeCombat.type + ")");
+        infoCombat[i].npc.life += typeCombat.bonusLife;
+        infoCombat[i].npc.attack += typeCombat.bonusAttack;
+        infoCombat[i].npc.defense += typeCombat.bonusDefense;
         infoCombat[i].isNpc = true;
         infoCombat[i].initiative = randNumb();
     }

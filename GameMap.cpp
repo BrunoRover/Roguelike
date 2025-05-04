@@ -33,6 +33,7 @@ struct EnemySpawn {
     int id, x, y;
     char type;
     bool active;
+    typeNpc typeNpc;
 };
 
 int enemyMoveCounter = 0;
@@ -52,11 +53,13 @@ void initEnemies(GameMap& map) {
             y = rand() % 25;
         } while (map.tiles[y][x] != 0); // 1 = parede, 0 = caminho
         
+        int typeCombat = rand() % 3;
         enemySpawns[i].x = x;
         enemySpawns[i].y = y;
         enemySpawns[i].active = true;
         enemySpawns[i].type = elements.enemy;
         enemySpawns[i].id = enemieCount;
+        enemySpawns[i].typeNpc = typesNpc[typeCombat];
         
         enemieCount++;
     }
@@ -71,7 +74,7 @@ void drawEnemie(VisibleMap& vmap) {
             coord.X = (SHORT)enemySpawns[i].x;
             coord.Y = (SHORT)enemySpawns[i].y;
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-            cout << enemySpawns[i].type;
+            cout << enemySpawns[i].typeNpc.color + enemySpawns[i].type + "\033[0m";
         }
     }
 }
@@ -281,7 +284,8 @@ void checkItems(GameMap& map, int playerX, int playerY) {
         if (enemySpawns[i].active && enemySpawns[i].x == playerX && enemySpawns[i].y == playerY) {
             clearConsole();
             Combatant infoCombat[maxCombatants];
-            generateInitiatives(infoCombat, enemies, countEnemies, player);
+            typeNpc typeCombat = enemySpawns[i].typeNpc;
+            generateInitiatives(infoCombat, enemies, countEnemies, player, typeCombat);
             int totalCombatants = countEnemies + 1;
     
             // inicia o combate contra o inimigo

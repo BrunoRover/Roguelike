@@ -85,12 +85,13 @@ struct typeNpc {
     int bonusLife;
     int bonusAttack;
     int bonusDefense;
+    string color;
 };
 
 typeNpc typesNpc[3] = {
-    {"Guerreiro",0,1,2},
-    {"Mago",0,3,0},
-    {"Ladino",1,2,0},
+    {"Guerreiro",0,1,2,"\033[0;32m"},
+    {"Mago",0,3,0,"\033[0;34m"},
+    {"Ladino",1,2,0,"\033[0;33m"},
 };
 
 string padRight(const string& text) {
