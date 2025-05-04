@@ -401,7 +401,17 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
     int cols = 105;
 
     // atualizar visibilidade do mapa
-    int visionRadius = 3;
+
+    int visionRadius = rangeVision;
+
+    for (int i = 0; i < player.inventoryCount; i++){
+        if(player.inventory[i].buffId == 5){
+            visionRadius += player.inventory[i].value;
+            break;
+        }
+    }
+    
+
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if (abs(i - playerY) <= visionRadius && abs(j - playerX) <= visionRadius) {

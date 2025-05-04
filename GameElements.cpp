@@ -10,8 +10,10 @@ const int maxLifeNpc = 2;
 const int maxCombatants = 10;
 const int baseLength = 120;
 const int countVisibleEnemies = 5;
-const int coutMaxItens = 4;
+const int coutMaxItens = 7;
 int  kill = 0;
+int  difficulty = 0;
+int  rangeVision = 3;
 
 string addInfoCombat = "";
 string playerInfoCombat = "";
@@ -44,7 +46,10 @@ Item itens[coutMaxItens] = {
     {1, "Pocao de cura", "Uma pocao feita por um grande alquimista ao usa-la ganha +1 de vida", true, 1},
     {2, "Pergaminho de misseis magicos", "Retira 1 de vida do inimigo sem precisar de acerto", true, 1},
     {3, "Espada do sol", "Uma espada feita com uma sentelha divina do Deus Tyr. Aumenta +2 de acerto permanente", false, 2},
-    {4, "Escudo da pureza", "Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente", false, 2}
+    {4, "Escudo da pureza", "Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente", false, 2},
+    {5, "Tocha Eterna de Everbright", "Uma tocha mágica que ilumina até os cantos mais escuros. Aumenta o campo de visao do jogador", false, 3},
+    {6, "Bomba arcana", "Uma bomba completamente instavel da de 0 a 3 de dano instantaneo ao inimigo", true, 3},
+    {7, "Fio de prata", "Ao chegar em 0 de vida, sobrevive com 1 de vida, apos isso o fio se rompe", false, 1}
 };
 
 struct Player {
@@ -73,6 +78,19 @@ struct Combatant {
     Npc npc;
     Player player;
     bool isNpc;
+};
+
+struct typeNpc {
+    string type;
+    int bonusLife;
+    int bonusAttack;
+    int bonusDefense;
+};
+
+typeNpc typesNpc[3] = {
+    {"Guerreiro",0,1,2},
+    {"Mago",0,3,0},
+    {"Ladino",1,2,0},
 };
 
 string padRight(const string& text) {

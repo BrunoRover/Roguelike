@@ -13,13 +13,14 @@ string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
 //usado para gerear os inimigos para o combate
 void generateEnemies(Npc enemies[],bool isBoss = false) {
+    
     if(isBoss){
         for (int i = 0; i < countEnemies; i++) {
-            enemies[i] = {false, (maxLifeNpc * 2) , 2, 2,true};
+            enemies[i] = {false, ((maxLifeNpc * 2) + difficulty), (2 + difficulty), (2 + difficulty),true};
         }
     }else{
         for (int i = 0; i < countEnemies; i++) {
-            enemies[i] = {false, maxLifeNpc, 0, 0,false};
+            enemies[i] = {false, (maxLifeNpc + difficulty), (0 + difficulty), (0 + difficulty),false};
         }
     }
 }
@@ -58,10 +59,14 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     infoCombat[0].player = player;
 
     for (int i = 1; i < totalCombatants; i++) {
-        infoCombat[i].name = ("Inimigo " + to_string(i));
+        int typeCombat = rand() % 3;
+        infoCombat[i].npc = enemies[i - 1];
+        infoCombat[i].name = ("Inimigo " + to_string(i) + "(" + typesNpc[typeCombat].type + ")");
+        infoCombat[i].npc.life += typesNpc[typeCombat].bonusLife;
+        infoCombat[i].npc.attack += typesNpc[typeCombat].bonusAttack;
+        infoCombat[i].npc.defense += typesNpc[typeCombat].bonusDefense;
         infoCombat[i].isNpc = true;
         infoCombat[i].initiative = randNumb();
-        infoCombat[i].npc = enemies[i - 1];
     }
 
     sortCombatants(infoCombat, totalCombatants);
@@ -336,21 +341,29 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         break;
                     }
                 }else{
+
                     //logica para uso dos itens
                     if (buttonsLayout[selectedOption] == itens[0].name){
                         //cura o player
-                        playerInfoCombat = "Voce usou pocao de cura";
+                        playerInfoCombat = "Voce usou " + itens[0].name;
                         infoCombat[indexCombat].player.life++;
                         actions--;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[0].name);
                     }else if(buttonsLayout[selectedOption] == itens[1].name){
                         //aplica dano no inimigo
-                        playerInfoCombat = "Voce usou Pergaminho de misseis magicos";
+                        playerInfoCombat = "Voce usou " + itens[1].name;
                         infoCombat[targetIndex].npc.life--;
                         actions--;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[1].name);
+                    }else if(buttonsLayout[selectedOption] == itens[5].name){
+                        //aplica dano no inimigo
+                        playerInfoCombat = "Voce usou " + itens[5].name;
+                        infoCombat[targetIndex].npc.life -= rand() % (itens[5].value + 1);
+                        actions--;
+                        //remove o item dps de usado
+                        removeItemFromInventory(infoCombat[indexCombat],itens[5].name);
                     }
                     selectedOption = 0;
                     exibirItens = false;
@@ -379,14 +392,32 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                 turn++;
             }
         }
-        //verificxa se o player morreu
+
+        //verifica se o player morreu
         if (infoCombat[indexPlayer].player.life <= 0){
             cout << "\033c";
             cout << "VOCE FOI DERROTADO";
-            player.life = 0;
-            cin.get();
-            gameOver = true;
-            return 0;
+            bool reLife = false;
+                    
+            for (int i = 0; i < player.inventoryCount; i++){
+                if(player.inventory[i].buffId == 7){
+                    reLife = true;
+                    break;
+                }
+            }
+
+            //verifica se tem o item que revive
+            if(reLife){
+                cout << "MAS O " + itens[6].name + "SALVOU SUA VIDA E SE ROMPEU";
+                player.life = 1;
+                removeItemFromInventory(infoCombat[indexPlayer],itens[6].name);
+            }else{
+                player.life = 0;
+                cin.get();
+                gameOver = true;
+                return 0;
+            }
+
         }
     }
     // atualiza os index
