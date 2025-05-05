@@ -71,6 +71,25 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     sortCombatants(infoCombat, totalCombatants);
 }
 
+//gera a iniciativa de todos combatentes incluindo o jogador usado para o boss
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
+    int totalCombatants = coutEnemie + 1;
+
+    infoCombat[0].name = "Jogador";
+    infoCombat[0].isNpc = false;
+    infoCombat[0].initiative = randNumb();
+    infoCombat[0].player = player;
+
+    for (int i = 1; i < totalCombatants; i++) {
+        infoCombat[i].npc = enemies[i - 1];
+        infoCombat[i].name = ("Inimigo " + to_string(i) + "(Boss)");
+        infoCombat[i].isNpc = true;
+        infoCombat[i].initiative = randNumb();
+    }
+
+    sortCombatants(infoCombat, totalCombatants);
+}
+
 //acoes automaticas do npc
 void actionNpc(Combatant& npc, Combatant& player) {
     //verifica se ele ja curou a vida e se esta abaixo da metade

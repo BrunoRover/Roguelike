@@ -2,7 +2,7 @@
 using namespace std;
 #include <string>
 #include <windows.h>
-#define MAX_ITEMS 4
+#define MAX_ITEMS 15
 
 
 const int countButtons = 4;
@@ -62,6 +62,8 @@ struct Player {
     int bossMap = 0; 
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
+    int xp = 0;
+    int nivel = 0;
 };
 
 struct Npc {
@@ -89,7 +91,7 @@ struct typeNpc {
 };
 
 typeNpc typesNpc[3] = {
-    {"Guerreiro",0,1,2,"\033[0;32m"},
+    {"Guerreiro",2,1,2,"\033[0;32m"},
     {"Mago",0,3,0,"\033[0;34m"},
     {"Ladino",1,2,0,"\033[0;33m"},
 };

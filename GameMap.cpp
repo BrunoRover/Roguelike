@@ -162,8 +162,8 @@ void initItems(GameMap& map) {
         gameItems[i].y = y;
         gameItems[i].collected = false;
         
-        // 50% poção, 50% armadilha (já que chave e bossMap são fixos)
-        gameItems[i].type = (rand() % 2 == 0) ? elements.item : elements.trap;
+        // 75% item, 25% armadilha (já que chave e bossMap são fixos)
+        gameItems[i].type = (rand() % 4 == 0) ? elements.trap : elements.item;
     }
     
     itemCount = MAX_ITEMS; // Atualiza o contador total
