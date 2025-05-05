@@ -29,7 +29,7 @@ void Reset() {
     player.inventory[0];
     itemCount = 0;
     minutes = 0;
-    seconds = 0; 
+    seconds = 0;
     score = 0;
     enemieCount = 0;
     gameItems[MAX_ITEMS];
@@ -108,7 +108,7 @@ void Game() {
     vmap.visible[y][x] = true;
     GameElements elements;
 
-    //logica do jogo 
+    //logica do jogo
     while (!gameOver && !isWin) {
         if (player.life == 0){
             gameOver = true;
@@ -144,10 +144,10 @@ void Game() {
                 generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
                 int totalCombatantsBoss = countEnemiesBoss + 1;
                 int returnCombat = combatMenu(infoCombatBoss, totalCombatantsBoss, player);
-    
+
                 if(returnCombat == 0){
                     player.life = 0;
-                    gameOver = true; 
+                    gameOver = true;
                     lastMessage = "Voce morreu!\n\n";
                     cout << "Tente novamente, quem sabe na proxima...";
                     cin.get();
@@ -206,20 +206,20 @@ void Game() {
                     break;
                 case 27:
                     clearConsole();
-                    gameOver = true; 
-                    drawInfoFinal(start); 
+                    gameOver = true;
+                    drawInfoFinal(start);
                     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
                     cin.get();
-                    
+
             }
         }
     }
     clearConsole();
-    gameOver = true; 
-    drawInfoFinal(start); 
+    gameOver = true;
+    drawInfoFinal(start);
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
     cin.get();
-    
+
 }
 
 int main() {
@@ -228,7 +228,7 @@ int main() {
 
     //enquanto o jogo não for encerrado, continua no menu
     while (!exit) {
-        
+
         if (_kbhit()) {
             int key = _getch();
             switch (key) {
@@ -249,12 +249,13 @@ int main() {
                 case 13: case 32:
                     if (Opcoes[MenuItem] == "  Jogar   ") {
                         system("cls");
+                        Difficulty();
                         Reset(); //toda vez que reiniciar o jogo, reseta as variaveis para evitar bugs e lixo de memoria
                         Game(); //inicia o jogo
                         system("cls");
                         RenderMenu(MenuItem);
                     } else if (Opcoes[MenuItem] == "Como Jogar") {
-                        instructiongame(); 
+                        instructiongame();
                     } else if (Opcoes[MenuItem] == "  Itens   ") {
                         Itens();
                     } else if (Opcoes[MenuItem] == "  Sair    ") {

@@ -41,12 +41,13 @@ void Itens(){
     cout << "\033c";
  }
 
-const int N_OPCOES = 4;
-int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
+const int N_OPCOES = 4, N_DIFFICULTY = 4;
+int selectedMenuItem = 0, MenuItem = 0, Menu = 0, difficulty = 0;
 string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    "};
+string OpcoesDifficulty[N_DIFFICULTY] = {"  Easy   ", "  Medium ", "  Hard   ", "  Voltar "};
 
 //renderiza o menu, limpando e reescrevendo com "> ".
-void RenderMenu(int MenuItem){ 
+void RenderMenu(int MenuItem){
     _kbhit();
     ClearConsole();
     cout << "= " + titleGame + " =\n";
@@ -57,5 +58,57 @@ void RenderMenu(int MenuItem){
             }else{
             cout << "|   " << Opcoes[i] << "   |" << endl;
         }   cout << "|================|\n";
+    }
+}
+
+void RenderDifficult(int difficulty){
+    _kbhit();
+    ClearConsole();
+    cout << "= DIFICULDADE DO JOGO =\n";
+    cout << "|================|\n";
+    for (int i = 0; i < N_DIFFICULTY; i++){
+            if (difficulty == i){
+            cout << "|>> " << OpcoesDifficulty[i] << " <<|" << endl;
+            }else{
+            cout << "|   " << OpcoesDifficulty[i] << "   |" << endl;
+        }   cout << "|================|\n";
+    }
+}
+
+void Difficulty(){
+    bool exit = false;
+    while (!exit) {
+
+        if (_kbhit()) {
+            int key = _getch();
+            switch (key) {
+                case 72: case 'w': case 'W':
+                    if (difficulty == 0){
+                        difficulty = 3;
+                    } else {
+                        difficulty -= 1;
+                    }
+                    break;
+                case 80: case 's': case 'S':
+                    if (difficulty == N_DIFFICULTY-1){
+                        difficulty = 0;
+                    } else {
+                        difficulty +=1;
+                    }
+                    break;
+                case 13: case 32:
+                    if (OpcoesDifficulty[difficulty] == "  Easy   ") {
+
+                    } else if (OpcoesDifficulty[difficulty] == "  Medium ") {
+
+                    } else if (OpcoesDifficulty[difficulty] == "  Hard   ") {
+                    } else if (OpcoesDifficulty[difficulty] == "  Voltar ") {
+                        cout << "Saindo...\n";
+                        exit = true;
+                    }
+                    break;
+            }
+            RenderDifficult(difficulty);
+        }
     }
 }
