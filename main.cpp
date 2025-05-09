@@ -92,7 +92,8 @@ void Game() {
     int cols = 105;
 
     //sorteia uma das matrizes de jogo
-    GameMap mapa = getRandomMap();
+    player.phase = 1;
+    GameMap mapa = getPhaseMap(player.phase);
     VisibleMap vmap;
     int x = cols / 2, y = rows / 2;
     int bossX = 12, bossY = 12;
@@ -108,6 +109,7 @@ void Game() {
     vmap.visible[y][x] = true;
     GameElements elements;
 
+    bool reset = false;
     //logica do jogo 
     while (!gameOver && !isWin) {
         if (player.life == 0){
@@ -115,6 +117,16 @@ void Game() {
         }
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
+        if(player.phase == 2){
+            mapa = getPhaseMap(2);
+                         
+        }
+        if (player.phase == 2 && !reset) {
+            mapa = getPhaseMap(2);
+            resetPlayerAndVision(vmap, x, y, rows, cols);
+            reset = true; 
+        }
+       
         if (player.bossMap && !player.inBossRoom) {
             // Transição para a sala do boss
             player.inBossRoom = true;

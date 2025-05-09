@@ -31,6 +31,7 @@ struct GameElements {
     char wall = char(219);   
     char path = ' '; 
     char dark = '.';
+    char newPhase = 'H';
     char door = char(35);
     char bossMap = char(33); 
     char key = char(42); //*
@@ -54,9 +55,14 @@ struct Player {
     int key = 0;
     Item inventory[coutMaxItens];
     int inventoryCount = 0;
-    int bossMap = 0; 
+    int bossMap = 0;
+    int phase = 1; 
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
+    bool inPhaseRoom = false;
+    bool fase2Iniciada = false;
+    bool phaseResetDone = false;
+    bool phaseRoomFirstEntry = true;
 };
 
 struct Npc {
