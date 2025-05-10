@@ -8,6 +8,7 @@
 #include "BossMap.cpp"
 #include "GameMap.cpp"
 #include "menu.cpp"
+#include "configLevel.cpp"
 
 using namespace std;
 
@@ -110,107 +111,115 @@ void Game() {
 
     //logica do jogo 
     while (!gameOver && !isWin) {
-        if (player.life == 0){
-            gameOver = true;
-        }
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+        
+        int thisXp = player.xp / levelUp;
+        if(thisXp != player.level){
+            clearConsole();
+            levelToUp(thisXp);
+        }else{
 
-        if (player.bossMap && !player.inBossRoom) {
-            // Transição para a sala do boss
-            player.inBossRoom = true;
-            x = bossX;
-            y = bossY;
-        }
-
-        if (player.inBossRoom) {
-            //Necessário fazer isso para não ficar piscando a tela
-            if (player.bossRoomFirstEntry) {
-                system("cls");
-                player.bossRoomFirstEntry = false;
+            if (player.bossMap && !player.inBossRoom) {
+                // Transição para a sala do boss
+                player.inBossRoom = true;
+                x = bossX;
+                y = bossY;
             }
-            bossRoom(mapFinal, x, y);
 
-            if (mapFinal.tiles[y][x] == bossIcon && !isWin && !gameOver) {
-                if (player.life == 0){
-                    gameOver = true;
+            if (player.inBossRoom) {
+                //Necessário fazer isso para não ficar piscando a tela
+                if (player.bossRoomFirstEntry) {
+                    system("cls");
+                    player.bossRoomFirstEntry = false;
                 }
-                // Iniciar combate com o boss, lógica de combate aqui
-                lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
-                clearConsole();
-                Combatant infoCombatBoss[2];
-                int countEnemiesBoss = 1;
-                Npc enemiesBoss[countEnemiesBoss];
-                generateEnemies(enemiesBoss,true);
-                generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
-                int totalCombatantsBoss = countEnemiesBoss + 1;
-                int returnCombat = combatMenu(infoCombatBoss, totalCombatantsBoss, player);
-    
-                if(returnCombat == 0){
-                    player.life = 0;
-                    gameOver = true; 
-                    lastMessage = "Voce morreu!\n\n";
-                    cout << "Tente novamente, quem sabe na proxima...";
-                    cin.get();
-                    cout << "\033c";
-                }else if (returnCombat == 1){
-                    lastMessage = "VOCE DERROTOU O BOSS\n\n";
-                    cout << "VITORIA, apos derrotar o boss, voce encontra a Lina e consegue fugir da montanha...\n\n";
-                    cin.get();
-                    isWin = true;
-                    cout << "\033c";
-                }
-                mapFinal.tiles[y][x] = 0;
-                if (mapFinal.tiles[y][x] == 0){
-                    isWin = true;
-                }
-            }
-        } else {
-            moveEnemiesRandomly(mapa); //funcao para movimentar todos inimigos do mapa
-            checkItems(mapa, x, y); //funcao responsavel por coletar o item pelo jogador
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
-            drawMap(mapa, vmap, x, y); //responsavel por desenhar o mapa e atualizar visibilidade
-        }
+                bossRoom(mapFinal, x, y);
 
-        drawInfo(); // mostra as informações do jogador e do jogo em tempo real
-        if (_kbhit()) {
-            tecla = _getch();
-            //lógica de movimentação do jogador na sala do boss
-            switch (tecla) {
-                case 72: case 'w':
-                    if (player.inBossRoom) {
-                        if (y > 0 && mapFinal.tiles[y-1][x] != 1) y--;
-                    } else {
-                        if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
+                if (mapFinal.tiles[y][x] == bossIcon && !isWin && !gameOver) {
+                    if (player.life == 0){
+                        gameOver = true;
                     }
-                    break;
-                case 80: case 's':
-                    if (player.inBossRoom) {
-                        if (y < 24 && mapFinal.tiles[y+1][x] != 1) y++;
-                    } else {
-                        if (y < 24 && mapa.tiles[y+1][x] == 0) y++;
-                    }
-                    break;
-                case 75: case 'a':
-                    if (player.inBossRoom) {
-                        if (x > 0 && mapFinal.tiles[y][x-1] != 1) x--;
-                    } else {
-                        if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
-                    }
-                    break;
-                case 77: case 'd':
-                    if (player.inBossRoom) {
-                        if (x < 24 && mapFinal.tiles[y][x+1] != 1) x++;
-                    } else {
-                        if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
-                    }
-                    break;
-                case 27:
+                    // Iniciar combate com o boss, lógica de combate aqui
+                    lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
                     clearConsole();
-                    gameOver = true; 
-                    drawInfoFinal(start); 
-                    cout << "Pressione 'Enter' para voltar ao Menu." << endl;
-                    cin.get();
-                    
+                    Combatant infoCombatBoss[2];
+                    int countEnemiesBoss = 1;
+                    Npc enemiesBoss[countEnemiesBoss];
+                    generateEnemies(enemiesBoss,true);
+                    generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
+                    int totalCombatantsBoss = countEnemiesBoss + 1;
+                    int returnCombat = combatMenu(infoCombatBoss, totalCombatantsBoss, player);
+        
+                    if(returnCombat == 0){
+                        player.life = 0;
+                        gameOver = true; 
+                        lastMessage = "Voce morreu!\n\n";
+                        cout << "Tente novamente, quem sabe na proxima...";
+                        cin.get();
+                        cout << "\033c";
+                    }else if (returnCombat == 1){
+                        lastMessage = "VOCE DERROTOU O BOSS\n\n";
+                        cout << "VITORIA, apos derrotar o boss, voce encontra a Lina e consegue fugir da montanha...\n\n";
+                        cin.get();
+                        isWin = true;
+                        cout << "\033c";
+                    }
+                    mapFinal.tiles[y][x] = 0;
+                    if (mapFinal.tiles[y][x] == 0){
+                        isWin = true;
+                    }
+                }
+            } else {
+                moveEnemiesRandomly(mapa); //funcao para movimentar todos inimigos do mapa
+                checkItems(mapa, x, y); //funcao responsavel por coletar o item pelo jogador
+                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
+                drawMap(mapa, vmap, x, y); //responsavel por desenhar o mapa e atualizar visibilidade
+            }
+
+            drawInfo(); // mostra as informações do jogador e do jogo em tempo real
+            if (_kbhit()) {
+                tecla = _getch();
+                //lógica de movimentação do jogador na sala do boss
+                switch (tecla) {
+                    case 72: case 'w':
+                        if (player.inBossRoom) {
+                            if (y > 0 && mapFinal.tiles[y-1][x] != 1) y--;
+                        } else {
+                            if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
+                        }
+                        break;
+                    case 80: case 's':
+                        if (player.inBossRoom) {
+                            if (y < 24 && mapFinal.tiles[y+1][x] != 1) y++;
+                        } else {
+                            if (y < 24 && mapa.tiles[y+1][x] == 0) y++;
+                        }
+                        break;
+                    case 75: case 'a':
+                        if (player.inBossRoom) {
+                            if (x > 0 && mapFinal.tiles[y][x-1] != 1) x--;
+                        } else {
+                            if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
+                        }
+                        break;
+                    case 77: case 'd':
+                        if (player.inBossRoom) {
+                            if (x < 24 && mapFinal.tiles[y][x+1] != 1) x++;
+                        } else {
+                            if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
+                        }
+                        break;
+                    case 27:
+                        clearConsole();
+                        gameOver = true; 
+                        drawInfoFinal(start); 
+                        cout << "Pressione 'Enter' para voltar ao Menu." << endl;
+                        cin.get();
+                        
+                }
+            }
+
+            if (player.life == 0){
+                gameOver = true;
             }
         }
     }

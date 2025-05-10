@@ -1,3 +1,17 @@
+logica para o xp
+subir de nivel a cada (variavel levelUp) de xp
+item da (variavel itemXp) de xp 
+
+
+
+
+
+
+
+
+
+
+
 item tocha (aumenta a zona de visão)
 
 bibilhotecas para tempo:

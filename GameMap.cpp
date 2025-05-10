@@ -206,6 +206,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                 
                 if(haveItem) {
                     lastMessage = "Voce achou o item " + newItem.name + ",mas ja tem esse item!";
+                    player.xp += itemXp;
                     break;
                 }else{
                     player.inventory[player.inventoryCount] = newItem;

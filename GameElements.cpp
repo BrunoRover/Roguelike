@@ -11,6 +11,9 @@ const int maxCombatants = 10;
 const int baseLength = 120;
 const int countVisibleEnemies = 5;
 const int coutMaxItens = 7;
+const int itemXp = 10;
+const int npcXp = 20;
+const int levelUp = 100;
 int  kill = 0;
 int  difficulty = 0;
 int  rangeVision = 3;
@@ -54,7 +57,7 @@ Item itens[coutMaxItens] = {
 
 struct Player {
     int life = 5;
-    int attack = 1;
+    int attack = 0;
     int defense = 0;
     int key = 0;
     Item inventory[coutMaxItens];

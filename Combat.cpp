@@ -450,7 +450,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     //atualiza a vida do player
     if (playerIndex != -1) {
         player.life = infoCombat[playerIndex].player.life;
-
+        player.xp += npcXp;
         for (int i = 0; i < 4; ++i) {
             player.inventory[i] = infoCombat[playerIndex].player.inventory[i];
         }
@@ -490,4 +490,3 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     
     return returnCombat;
 }
-
