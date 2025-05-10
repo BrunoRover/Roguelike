@@ -2,9 +2,9 @@
 using namespace std;
 #include <string>
 #include <windows.h>
-#define MAX_ITEMS 4
 
 
+int MAX_ITEMS = 10;
 const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;

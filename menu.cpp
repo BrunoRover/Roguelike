@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "GameElements.cpp"
+#include "GameMap.cpp"
 using namespace std;
 
 //função que limpa a tela do console
@@ -41,9 +42,9 @@ void Itens(){
     cout << "\033c";
  }
 
-const int N_OPCOES = 4, N_DIFFICULTY = 4;
+const int N_OPCOES = 5, N_DIFFICULTY = 4;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0, difficulty = 0;
-string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    "};
+string Opcoes[N_OPCOES] = {"   Jogar   ", "Como Jogar ","Dificuldade", "   Itens   ", "   Sair    "};
 string OpcoesDifficulty[N_DIFFICULTY] = {"  Easy   ", "  Medium ", "  Hard   ", "  Voltar "};
 
 //renderiza o menu, limpando e reescrevendo com "> ".
@@ -51,13 +52,13 @@ void RenderMenu(int MenuItem){
     _kbhit();
     ClearConsole();
     cout << "= " + titleGame + " =\n";
-    cout << "|================|\n";
+    cout << "|=================|\n";
     for (int i = 0; i < N_OPCOES; i++){
             if (MenuItem == i){
             cout << "|>> " << Opcoes[i] << " <<|" << endl;
             }else{
             cout << "|   " << Opcoes[i] << "   |" << endl;
-        }   cout << "|================|\n";
+        }   cout << "|=================|\n";
     }
 }
 
@@ -68,17 +69,19 @@ void RenderDifficult(int difficulty){
     cout << "|================|\n";
     for (int i = 0; i < N_DIFFICULTY; i++){
             if (difficulty == i){
-            cout << "|>> " << OpcoesDifficulty[i] << " <<|" << endl;
+            cout << "|>> " << OpcoesDifficulty[i] << "  <<|" << endl;
             }else{
-            cout << "|   " << OpcoesDifficulty[i] << "   |" << endl;
+            cout << "|   " << OpcoesDifficulty[i] << "    |" << endl;
         }   cout << "|================|\n";
     }
 }
 
-void Difficulty(){
+void Difficulty(Player &player){
     bool exit = false;
-    while (!exit) {
+    cout << "\033c";
+    RenderDifficult(difficulty);
 
+    while (!exit) {
         if (_kbhit()) {
             int key = _getch();
             switch (key) {
@@ -97,14 +100,18 @@ void Difficulty(){
                     }
                     break;
                 case 13: case 32:
-                    if (OpcoesDifficulty[difficulty] == "  Easy   ") {
+                    if (OpcoesDifficulty[difficulty] == "  Easy   "){
+                        player.life = 5;
+                        MAX_ITEMS = 10;
 
+                        cout << "Dificuldade Facil selecionada.";
                     } else if (OpcoesDifficulty[difficulty] == "  Medium ") {
 
                     } else if (OpcoesDifficulty[difficulty] == "  Hard   ") {
                     } else if (OpcoesDifficulty[difficulty] == "  Voltar ") {
                         cout << "Saindo...\n";
                         exit = true;
+                        cout << "\033c";
                     }
                     break;
             }

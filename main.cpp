@@ -249,13 +249,14 @@ int main() {
                 case 13: case 32:
                     if (Opcoes[MenuItem] == "  Jogar   ") {
                         system("cls");
-                        Difficulty();
                         Reset(); //toda vez que reiniciar o jogo, reseta as variaveis para evitar bugs e lixo de memoria
                         Game(); //inicia o jogo
                         system("cls");
                         RenderMenu(MenuItem);
                     } else if (Opcoes[MenuItem] == "Como Jogar") {
                         instructiongame();
+                    } else if (Opcoes[MenuItem] == "Dificuldade") {
+                        Difficulty(player);
                     } else if (Opcoes[MenuItem] == "  Itens   ") {
                         Itens();
                     } else if (Opcoes[MenuItem] == "  Sair    ") {
