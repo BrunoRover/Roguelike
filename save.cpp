@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void salvarRelatorio(int pontuacao, int vida, int itens, int maxItens, int chaves, int minutos, int segundos) {
+void saveReport(int pontuacao, int vida, int itens, int maxItens, int chaves, int minutos, int segundos) {
     ofstream arquivo("relatorio_partida.txt", ios::app); 
     if (arquivo.is_open()) {
         arquivo << "--- Relatorio de Partida ---\n";
@@ -20,7 +20,7 @@ void salvarRelatorio(int pontuacao, int vida, int itens, int maxItens, int chave
     }
 }
 
-void mostrarRelatorio() {
+void showReport() {
     ifstream arquivo("relatorio_partida.txt");
     if (arquivo.is_open()) {
         string linha;

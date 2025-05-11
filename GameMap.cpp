@@ -44,6 +44,10 @@ int enemieCount = 0;
 
 EnemySpawn enemySpawns[countVisibleEnemies];
 
+void setTextColor(int cor) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, cor);
+}
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
 
@@ -473,7 +477,9 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if (i == playerY && j == playerX) {
+                setTextColor(player.colorText);
                 cout << elements.person;
+                setTextColor(7);
             } else if (vmap.visible[i][j]) {
                 bool hasItem = false;  // verificar se há um item nesta posição
                 for (int k = 0; k < itemCount; k++) {

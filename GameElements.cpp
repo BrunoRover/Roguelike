@@ -58,6 +58,7 @@ struct Player {
     int inventoryCount = 0;
     int bossMap = 0;
     int phase = 1; 
+    int colorText = 7;
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
     bool inPhaseRoom = false;

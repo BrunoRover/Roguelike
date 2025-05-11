@@ -342,6 +342,9 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         playerInfoCombat = "Voce usou pocao de cura";
                         infoCombat[indexCombat].player.life++;
                         actions--;
+                        // muda cor para verde (cura)
+                        player.colorText = 10;
+
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[0].name);
                     }else if(buttonsLayout[selectedOption] == itens[1].name){
@@ -349,6 +352,8 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         playerInfoCombat = "Voce usou Pergaminho de misseis magicos";
                         infoCombat[targetIndex].npc.life--;
                         actions--;
+                        // muda cor para vermelho (ataque mágico)
+                        player.colorText = 12;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[1].name);
                     }

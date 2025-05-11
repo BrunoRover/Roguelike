@@ -62,7 +62,7 @@ void drawInfoFinal(time_t start) {
     cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
 
     // Salvar relatório
-    salvarRelatorio(score, player.life, player.inventoryCount, MAX_ITEMS, player.key, minutes, seconds);
+    saveReport(score, player.life, player.inventoryCount, MAX_ITEMS, player.key, minutes, seconds);
 }
 
 void Game() {
@@ -286,14 +286,10 @@ int main() {
                     else if (Opcoes[MenuItem] == "Historico") {
                         system("cls");
                         cout << "\033c";
-                        mostrarRelatorio();
+                        showReport();
                         cout << "pressione Enter para voltar ao Menu.";
                         cin.get();
                         cout << "\033c";
-
-                        
-
-                        
                     } else if (Opcoes[MenuItem] == "  Sair    ") {
                         cout << "Saindo...\n";
                         exit = true;
