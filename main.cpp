@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
+#include <thread>  // para simular tempo de execução
+#include <chrono>
 #include "GameElements.cpp"
 #include "BossMap.cpp"
 #include "GameMap.cpp"
@@ -18,7 +20,6 @@ bool isWin = false;
 void Reset() {
     gameOver = false;
     isWin = false;
-    player.life = 5;
     player.attack = 1;
     player.defense = 0;
     player.key = 0;
@@ -31,12 +32,22 @@ void Reset() {
     minutes = 0;
     seconds = 0;
     score = 0;
-    enemieCount = 0;
     gameItems[MAX_ITEMS];
     quantityOfItemCollected = 0;
     mapFinal.tiles[5][12] = bossIcon;
     lastMessage = "";
 }
+
+void mostrarTempo(int segundos) { // Exibe o tempo de jogo em tempo real.
+    int minutos = segundos / 60;
+    int segundos_restantes = segundos % 60;
+    std::cout << "\033[30;30H";
+    std::cout << "\rTempo decorrido: "
+              << std::setfill('0') << std::setw(2) << minutos << ":"
+              << std::setfill('0') << std::setw(2) << segundos_restantes
+              << std::flush;
+}
+
 // calcula o score
 void Score(){
     score = kill * 5;
@@ -65,6 +76,13 @@ void drawInfoFinal(time_t start) {
 }
 
 void Game() {
+    if (player.life == 0){
+        cout << "Selecione a dificuldade do jogo antes de comecar.\n\nPressione 'Enter' para voltar ao Menu.";
+        cin.get();
+        isWin = true;
+        cout << "\033c";
+        return;
+    }
 
     //pagina1 e pagina2 é referente a história do jogo
     cout << pagina1;
@@ -111,9 +129,14 @@ void Game() {
     //logica do jogo
     while (!gameOver && !isWin) {
         if (player.life == 0){
+
             gameOver = true;
         }
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); //coordenada do tempo
+        std::time_t now = std::time(nullptr);                             //tempo atual
+        int elapsed = static_cast<int>(std::difftime(now, start));        //calcula a diferença do tempo que iniciou e o atual
+        mostrarTempo(elapsed);                                            //exibe o tempo
 
         if (player.bossMap && !player.inBossRoom) {
             // Transição para a sala do boss
@@ -204,6 +227,9 @@ void Game() {
                         if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
                     }
                     break;
+                    case 'i': case 'I':
+                    drawInventory(); // chama a função de inventário
+                    break;
                 case 27:
                     clearConsole();
                     gameOver = true;
@@ -219,7 +245,6 @@ void Game() {
     drawInfoFinal(start);
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
     cin.get();
-
 }
 
 int main() {
@@ -234,7 +259,7 @@ int main() {
             switch (key) {
                 case 72: case 'w': case 'W':
                     if (MenuItem == 0){
-                        MenuItem = 3;
+                        MenuItem = 4;
                     } else {
                         MenuItem -= 1;
                     }
@@ -247,19 +272,19 @@ int main() {
                     }
                     break;
                 case 13: case 32:
-                    if (Opcoes[MenuItem] == "  Jogar   ") {
+                    if (Opcoes[MenuItem] == "   Jogar   ") {
                         system("cls");
                         Reset(); //toda vez que reiniciar o jogo, reseta as variaveis para evitar bugs e lixo de memoria
                         Game(); //inicia o jogo
                         system("cls");
                         RenderMenu(MenuItem);
-                    } else if (Opcoes[MenuItem] == "Como Jogar") {
+                    } else if (Opcoes[MenuItem] == "Como Jogar ") {
                         instructiongame();
                     } else if (Opcoes[MenuItem] == "Dificuldade") {
                         Difficulty(player);
-                    } else if (Opcoes[MenuItem] == "  Itens   ") {
+                    } else if (Opcoes[MenuItem] == "   Itens   ") {
                         Itens();
-                    } else if (Opcoes[MenuItem] == "  Sair    ") {
+                    } else if (Opcoes[MenuItem] == "   Sair    ") {
                         cout << "Saindo...\n";
                         exit = true;
                     }

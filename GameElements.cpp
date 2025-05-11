@@ -2,9 +2,9 @@
 using namespace std;
 #include <string>
 #include <windows.h>
+#define MAX_ITEMS 4
 
 
-int MAX_ITEMS = 10;
 const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
@@ -27,12 +27,12 @@ struct Item {
 };
 
 struct GameElements {
-    char person = char(36);  
-    char wall = char(219);   
-    char path = ' '; 
+    char person = char(36);
+    char wall = char(219);
+    char path = ' ';
     char dark = '.';
     char door = char(35);
-    char bossMap = char(33); 
+    char bossMap = char(33);
     char key = char(42); //*
     char item = char(38); //&
     char trap = char(63); //?
@@ -48,13 +48,13 @@ Item itens[coutMaxItens] = {
 };
 
 struct Player {
-    int life = 5;
+    int life;
     int attack = 1;
     int defense = 0;
     int key = 0;
     Item inventory[coutMaxItens];
     int inventoryCount = 0;
-    int bossMap = 0; 
+    int bossMap = 0;
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
 };

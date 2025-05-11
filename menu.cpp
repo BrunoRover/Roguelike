@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "GameElements.cpp"
-#include "GameMap.cpp"
 using namespace std;
 
 //função que limpa a tela do console
@@ -22,9 +21,10 @@ void ClearConsole() {
 void instructiongame(){
     ClearConsole();
     cout << "\033c";
-    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Use o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a acao.\n";
-    cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: 'Atacar' (gera um ataque no inimigo), 'Defender' (defende do inimigo), 'Fugir' (sai do combate), 'Itens' (abre inventario, para utilizar algum item coletado).\n";
-    cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, voce tera que recomecar a partida desde o inicio.\n";
+    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. \nUse o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a acao.\n";
+    cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: \n'Atacar' (gera um ataque no inimigo). \n'Defender' (defende do inimigo). \n'Fugir' (sai do combate). \n'Itens' (abre inventario, para utilizar algum item coletado).\n";
+    cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, \nvoce tera que recomecar a partida desde o inicio.\n";
+    cout << "\n4- Sistema de Pontuacao: \n+5 pontos para cada inimigo eliminado. \n+1 ponto para cada item ou chave coletado.\n-1 pontos a cada 2 minutos de jogo corrido.\n";
     cout << "\nPressione 'Enter' para voltar ao Menu.";
     cin.get();
     cout << "\033c"; // Sai do jogo e volta pro menu.
@@ -45,13 +45,13 @@ void Itens(){
 const int N_OPCOES = 5, N_DIFFICULTY = 4;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0, difficulty = 0;
 string Opcoes[N_OPCOES] = {"   Jogar   ", "Como Jogar ","Dificuldade", "   Itens   ", "   Sair    "};
-string OpcoesDifficulty[N_DIFFICULTY] = {"  Easy   ", "  Medium ", "  Hard   ", "  Voltar "};
+string OpcoesDifficulty[N_DIFFICULTY] = {"  Facil  ", "  Medio  ", "  Dificil", "  Voltar "};
 
 //renderiza o menu, limpando e reescrevendo com "> ".
 void RenderMenu(int MenuItem){
     _kbhit();
     ClearConsole();
-    cout << "= " + titleGame + " =\n";
+    cout << "=== " + titleGame + " ===\n";
     cout << "|=================|\n";
     for (int i = 0; i < N_OPCOES; i++){
             if (MenuItem == i){
@@ -100,14 +100,24 @@ void Difficulty(Player &player){
                     }
                     break;
                 case 13: case 32:
-                    if (OpcoesDifficulty[difficulty] == "  Easy   "){
+                    if (OpcoesDifficulty[difficulty] == "  Facil  "){
                         player.life = 5;
-                        MAX_ITEMS = 10;
-
-                        cout << "Dificuldade Facil selecionada.";
-                    } else if (OpcoesDifficulty[difficulty] == "  Medium ") {
-
-                    } else if (OpcoesDifficulty[difficulty] == "  Hard   ") {
+                        cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
+                    } else if (OpcoesDifficulty[difficulty] == "  Medio  ") {
+                        player.life = 4;
+                        cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
+                    } else if (OpcoesDifficulty[difficulty] == "  Dificil") {
+                        player.life = 3;
+                        cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
                     } else if (OpcoesDifficulty[difficulty] == "  Voltar ") {
                         cout << "Saindo...\n";
                         exit = true;

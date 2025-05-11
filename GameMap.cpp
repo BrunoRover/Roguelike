@@ -41,6 +41,7 @@ int enemieCount = 0;
 
 EnemySpawn enemySpawns[countVisibleEnemies];
 
+
 //função responsavel por sortear a posição x e y dos inimigos
 void initEnemies(GameMap& map) {
 
@@ -317,6 +318,24 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             break;
         }
     }
+}
+
+void drawInventory() {                          //inventario do jogo
+    system("cls");
+    cout << "======== INVENTARIO DO JOGADOR ========" << endl << endl;
+    if (player.inventoryCount == 0 && player.key == 0) {
+        cout << "Seu inventario esta vazio." << endl;
+    } else {
+        if (player.key > 0){
+            cout << "1 chave" << endl;
+        }
+        for (int i = 0; i < player.inventoryCount; i++) {
+            cout << i + 1 << ". " << player.inventory[i].name << endl;
+        }
+    }
+
+    cout << "\nPressione 'Enter para voltar ao jogo.";
+    getch();
 }
 
 //função responsavel por mostrar informações na tela
