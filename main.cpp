@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
 #include "GameElements.cpp"
+#include "save.cpp"
 #include "BossMap.cpp"
 #include "GameMap.cpp"
 #include "menu.cpp"
@@ -60,8 +61,8 @@ void drawInfoFinal(time_t start) {
     cout << "Vida: " << player.life << " | Itens Coletados: " << player.inventoryCount << "/" << MAX_ITEMS << " | Chaves Coletadas: " << player.key << endl;
     cout << "\nTempo de Jogo: " << minutes << ":" << setw(2) << setfill('0') << seconds << " minutos\n\n";
 
-    //cout << "Pressione 'Enter' para voltar ao Menu." << endl;
-    //cin.get();
+    // Salvar relatório
+    salvarRelatorio(score, player.life, player.inventoryCount, MAX_ITEMS, player.key, minutes, seconds);
 }
 
 void Game() {
@@ -241,7 +242,6 @@ void Game() {
     }
     clearConsole();
     gameOver = true; 
-    drawInfoFinal(start); 
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
     cin.get();
     
@@ -282,12 +282,25 @@ int main() {
                         instructiongame(); 
                     } else if (Opcoes[MenuItem] == "  Itens   ") {
                         Itens();
+                    }
+                    else if (Opcoes[MenuItem] == "Historico") {
+                        system("cls");
+                        cout << "\033c";
+                        mostrarRelatorio();
+                        cout << "pressione Enter para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033c";
+
+                        
+
+                        
                     } else if (Opcoes[MenuItem] == "  Sair    ") {
                         cout << "Saindo...\n";
                         exit = true;
                     }
+                    
                     break;
-            }
+                }
             RenderMenu(MenuItem);
         }
 

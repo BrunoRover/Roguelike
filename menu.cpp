@@ -41,9 +41,10 @@ void Itens(){
     cout << "\033c";
  }
 
-const int N_OPCOES = 4;
+
+const int N_OPCOES = 5;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
-string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "  Sair    "};
+string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "Historico", "  Sair    "};
 
 //renderiza o menu, limpando e reescrevendo com "> ".
 void RenderMenu(int MenuItem){ 

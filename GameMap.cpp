@@ -443,7 +443,7 @@ GameMap createMap1(){
     };
 GameMap getPhaseMap(int phase){
     createMap1();
-    createMap2();
+    createMap2(); 
     createMap3(); 
 
     switch(phase) {
