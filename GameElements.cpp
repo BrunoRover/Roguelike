@@ -33,6 +33,7 @@ struct GameElements {
     char dark = '.';
     char newPhase = 'H';
     char door = char(35);
+    char door2 = char(35);
     char bossMap = char(33); 
     char key = char(42); //*
     char item = char(38); //&

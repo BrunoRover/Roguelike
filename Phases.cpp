@@ -91,3 +91,78 @@ GameMap createMap1(){
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     };
     };
+
+    void initItems(GameMap& map, int phase) {
+    itemCount = 0;
+    phase = player.phase;
+
+    // Adiciona chave em uma das posições pré-definidas
+    if (map.tiles[2][2] == 4) {
+        gameItems[itemCount].type = elements.key;
+        gameItems[itemCount].x = 2;
+        gameItems[itemCount].y = 2;
+        gameItems[itemCount].collected = false;
+        map.tiles[2][2] == 0;
+        itemCount++;
+    } 
+    else if (map.tiles[10][2] == 4) {
+        gameItems[itemCount].type = elements.key;
+        gameItems[itemCount].x = 2;
+        gameItems[itemCount].y = 10;
+        gameItems[itemCount].collected = false;
+        map.tiles[10][2] == 0;
+        itemCount++;
+    }
+
+    // Adiciona mapa do boss
+    if (map.tiles[5][87] == 3) {
+        gameItems[itemCount].type = elements.bossMap;
+        gameItems[itemCount].x = 87;
+        gameItems[itemCount].y = 5;
+        gameItems[itemCount].collected = false;
+        map.tiles[5][87] == 0;
+        itemCount++;
+    } 
+    else if (map.tiles[21][7] == 3) {
+        gameItems[itemCount].type = elements.bossMap;
+        gameItems[itemCount].x = 7;
+        gameItems[itemCount].y = 21;
+        gameItems[itemCount].collected = false;
+        map.tiles[21][7] == 0;
+        itemCount++;
+    }
+
+    // Adiciona marcador de nova fase
+    if (map.tiles[5][86] == 5) {
+        gameItems[itemCount].type = elements.newPhase;
+        gameItems[itemCount].x = 86;
+        gameItems[itemCount].y = 5;
+        gameItems[itemCount].collected = false;
+        map.tiles[5][86] == 0;
+        itemCount++;
+    } 
+    else if (map.tiles[21][6] == 5) {
+        gameItems[itemCount].type = elements.newPhase;
+        gameItems[itemCount].x = 6;
+        gameItems[itemCount].y = 21;
+        gameItems[itemCount].collected = false;
+        map.tiles[21][6] == 0;
+        itemCount++;
+    }
+
+    // Itens aleatórios restantes (poções e armadilhas)
+    for (int i = itemCount; i < MAX_ITEMS; i++) {
+        int x, y;
+        do {
+            x = rand() % 105;
+            y = rand() % 25;
+        } while (map.tiles[y][x] != 0); // Só coloca item no caminho
+
+        gameItems[i].x = x;
+        gameItems[i].y = y;
+        gameItems[i].collected = false;
+        gameItems[i].type = (rand() % 2 == 0) ? elements.item : elements.trap;
+    }
+
+    itemCount = MAX_ITEMS; // Atualiza o total de itens
+}

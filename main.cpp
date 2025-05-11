@@ -105,11 +105,12 @@ void Game() {
     initEnemies(mapa);
 
     //inicia o itens
-    initItems(mapa);
+    initItems(mapa, player.phase);
     vmap.visible[y][x] = true;
     GameElements elements;
 
     bool reset = false;
+    bool isReset = false;
     //logica do jogo 
     while (!gameOver && !isWin) {
         if (player.life == 0){
@@ -123,8 +124,20 @@ void Game() {
         }
         if (player.phase == 2 && !reset) {
             mapa = getPhaseMap(2);
+            initItems(mapa, player.phase);
+            initEnemies(mapa);
             resetPlayerAndVision(vmap, x, y, rows, cols);
             reset = true; 
+        }
+        if(player.phase == 3){
+            mapa = getPhaseMap(3);                 
+        }
+        if (player.phase == 3 && !isReset) {
+            mapa = getPhaseMap(3);
+            initItems(mapa, player.phase);
+            initEnemies(mapa);
+            resetPlayerAndVision(vmap, x, y, rows, cols);
+            isReset = true; 
         }
        
         if (player.bossMap && !player.inBossRoom) {
@@ -277,6 +290,7 @@ int main() {
             }
             RenderMenu(MenuItem);
         }
+
     }
     return 0;
 }
