@@ -212,6 +212,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                     player.inventory[player.inventoryCount] = newItem;
                     player.inventoryCount++;
                     lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
+                    player.xp += itemXp;
                 }
             }
 

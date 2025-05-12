@@ -8,7 +8,7 @@
 #include "BossMap.cpp"
 #include "GameMap.cpp"
 #include "menu.cpp"
-#include "configLevel.cpp"
+#include "ConfigLevel.cpp"
 
 using namespace std;
 
@@ -115,8 +115,7 @@ void Game() {
         
         int thisXp = player.xp / levelUp;
         if(thisXp != player.level){
-            clearConsole();
-            levelToUp(thisXp);
+            levelToUp(thisXp, player);
         }else{
 
             if (player.bossMap && !player.inBossRoom) {

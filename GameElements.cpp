@@ -11,8 +11,8 @@ const int maxCombatants = 10;
 const int baseLength = 120;
 const int countVisibleEnemies = 5;
 const int coutMaxItens = 7;
-const int itemXp = 10;
-const int npcXp = 20;
+const int itemXp = 100;
+const int npcXp = 100;
 const int levelUp = 100;
 int  kill = 0;
 int  difficulty = 0;
@@ -66,7 +66,7 @@ struct Player {
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
     int xp = 0;
-    int nivel = 0;
+    int level = 0;
 };
 
 struct Npc {
@@ -150,6 +150,11 @@ string pagina2 =
 "  E assim, sem hesitar, Voce adentra a escuridao,\n"
 "  onde Lina aguarda... e o destino sera decidido.\n";
 
+string buffCombat[3] = {
+    "Vida",
+    "Ataque",
+    "Defesa"
+};
 
 const int countEnemies = 1;
 Npc enemies[countEnemies];
