@@ -12,6 +12,7 @@ const int baseLength = 120;
 const int countVisibleEnemies = 5;
 const int coutMaxItens = 4;
 int  kill = 0;
+int  difficulty = 0;
 
 string addInfoCombat = "";
 string playerInfoCombat = "";

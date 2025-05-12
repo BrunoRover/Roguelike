@@ -43,7 +43,7 @@ void Itens(){
  }
 
 const int N_OPCOES = 5, N_DIFFICULTY = 4;
-int selectedMenuItem = 0, MenuItem = 0, Menu = 0, difficulty = 0;
+int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
 string Opcoes[N_OPCOES] = {"   Jogar   ", "Como Jogar ","Dificuldade", "   Itens   ", "   Sair    "};
 string OpcoesDifficulty[N_DIFFICULTY] = {"  Facil  ", "  Medio  ", "  Dificil", "  Voltar "};
 
@@ -101,19 +101,16 @@ void Difficulty(Player &player){
                     break;
                 case 13: case 32:
                     if (OpcoesDifficulty[difficulty] == "  Facil  "){
-                        player.life = 5;
                         cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
                         cin.get();
                         cout << "\033[2J\033[H";
                         exit = true;
                     } else if (OpcoesDifficulty[difficulty] == "  Medio  ") {
-                        player.life = 4;
                         cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
                         cin.get();
                         cout << "\033[2J\033[H";
                         exit = true;
                     } else if (OpcoesDifficulty[difficulty] == "  Dificil") {
-                        player.life = 3;
                         cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
                         cin.get();
                         cout << "\033[2J\033[H";
