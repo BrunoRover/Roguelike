@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
+#include <thread>  // para simular tempo de execução
+#include <chrono>
 #include "GameElements.cpp"
 #include "BossMap.cpp"
 #include "GameMap.cpp"
@@ -19,7 +21,6 @@ bool isWin = false;
 void Reset() {
     gameOver = false;
     isWin = false;
-    player.life = 5;
     player.attack = 1;
     player.defense = 0;
     player.key = 0;
@@ -30,14 +31,24 @@ void Reset() {
     player.inventory[0];
     itemCount = 0;
     minutes = 0;
-    seconds = 0; 
+    seconds = 0;
     score = 0;
-    enemieCount = 0;
     gameItems[MAX_ITEMS];
     quantityOfItemCollected = 0;
     mapFinal.tiles[5][12] = bossIcon;
     lastMessage = "";
 }
+
+void mostrarTempo(int segundos) { // Exibe o tempo de jogo em tempo real.
+    int minutos = segundos / 60;
+    int segundos_restantes = segundos % 60;
+    std::cout << "\033[30;30H";
+    std::cout << "\rTempo decorrido: "
+              << std::setfill('0') << std::setw(2) << minutos << ":"
+              << std::setfill('0') << std::setw(2) << segundos_restantes
+              << std::flush;
+}
+
 // calcula o score
 void Score(){
     score = kill * 5;
@@ -99,6 +110,11 @@ void Game() {
     int bossX = 12, bossY = 12;
     char tecla;
 
+    //ajusta a dificuldade do jogo
+    player.life -= difficulty;
+    countVisibleEnemies += (difficulty * 3);
+    itensSpaw -= (difficulty * 3);
+
     //gerear os inimigos para o combate
     generateEnemies(enemies);
     //sortear a posição x e y dos inimigos
@@ -109,9 +125,9 @@ void Game() {
     vmap.visible[y][x] = true;
     GameElements elements;
 
-    //logica do jogo 
+    //logica do jogo
     while (!gameOver && !isWin) {
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord); //coordenada do tempo
         
         int thisXp = player.xp / levelUp;
         if(thisXp != player.level){
@@ -137,11 +153,14 @@ void Game() {
                     if (player.life == 0){
                         gameOver = true;
                     }
+                    
+                    std::time_t now = std::time(nullptr);                             //tempo atual
+                    int elapsed = static_cast<int>(std::difftime(now, start));        //calcula a diferença do tempo que iniciou e o atual
+                    mostrarTempo(elapsed);    
                     // Iniciar combate com o boss, lógica de combate aqui
                     lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
                     clearConsole();
                     Combatant infoCombatBoss[2];
-                    int countEnemiesBoss = 1;
                     Npc enemiesBoss[countEnemiesBoss];
                     generateEnemies(enemiesBoss,true);
                     generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
@@ -179,28 +198,28 @@ void Game() {
                 tecla = _getch();
                 //lógica de movimentação do jogador na sala do boss
                 switch (tecla) {
-                    case 72: case 'w':
+                    case 72: case 'w': case 'W':
                         if (player.inBossRoom) {
                             if (y > 0 && mapFinal.tiles[y-1][x] != 1) y--;
                         } else {
                             if (y > 0 && mapa.tiles[y-1][x] == 0) y--;
                         }
                         break;
-                    case 80: case 's':
+                    case 80: case 's': case 'S':
                         if (player.inBossRoom) {
                             if (y < 24 && mapFinal.tiles[y+1][x] != 1) y++;
                         } else {
                             if (y < 24 && mapa.tiles[y+1][x] == 0) y++;
                         }
                         break;
-                    case 75: case 'a':
+                    case 75: case 'a': case 'A':
                         if (player.inBossRoom) {
                             if (x > 0 && mapFinal.tiles[y][x-1] != 1) x--;
                         } else {
                             if (x > 0 && mapa.tiles[y][x-1] == 0) x--;
                         }
                         break;
-                    case 77: case 'd':
+                    case 77: case 'd': case 'D':
                         if (player.inBossRoom) {
                             if (x < 24 && mapFinal.tiles[y][x+1] != 1) x++;
                         } else {
@@ -223,11 +242,10 @@ void Game() {
         }
     }
     clearConsole();
-    gameOver = true; 
-    drawInfoFinal(start); 
+    gameOver = true;
+    drawInfoFinal(start);
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
     cin.get();
-    
 }
 
 int main() {
@@ -236,13 +254,13 @@ int main() {
 
     //enquanto o jogo não for encerrado, continua no menu
     while (!exit) {
-        
+
         if (_kbhit()) {
             int key = _getch();
             switch (key) {
                 case 72: case 'w': case 'W':
                     if (MenuItem == 0){
-                        MenuItem = 3;
+                        MenuItem = 4;
                     } else {
                         MenuItem -= 1;
                     }
@@ -255,17 +273,19 @@ int main() {
                     }
                     break;
                 case 13: case 32:
-                    if (Opcoes[MenuItem] == "  Jogar   ") {
+                    if (Opcoes[MenuItem] == "   Jogar   ") {
                         system("cls");
                         Reset(); //toda vez que reiniciar o jogo, reseta as variaveis para evitar bugs e lixo de memoria
                         Game(); //inicia o jogo
                         system("cls");
                         RenderMenu(MenuItem);
-                    } else if (Opcoes[MenuItem] == "Como Jogar") {
-                        instructiongame(); 
-                    } else if (Opcoes[MenuItem] == "  Itens   ") {
+                    } else if (Opcoes[MenuItem] == "Como Jogar ") {
+                        instructiongame();
+                    } else if (Opcoes[MenuItem] == "Dificuldade") {
+                        Difficulty(player);
+                    } else if (Opcoes[MenuItem] == "   Itens   ") {
                         Itens();
-                    } else if (Opcoes[MenuItem] == "  Sair    ") {
+                    } else if (Opcoes[MenuItem] == "   Sair    ") {
                         cout << "Saindo...\n";
                         exit = true;
                     }

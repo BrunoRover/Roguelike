@@ -140,7 +140,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
     for (int i = 0; i < totalCombatants; i++) {
         infoCombatant = ((i == indexCombat) ? "> " : "  ");
         infoCombatant += (infoCombat[i].name + " (Iniciativa: " + to_string(infoCombat[i].initiative) + ") Vida: " + to_string((infoCombat[i].isNpc) ? infoCombat[i].npc.life : infoCombat[i].player.life));
-        cout << padRight(infoCombatant);   
+        cout << padRight(infoCombatant);
     }
     cout << padRight("====================================================");
 
@@ -245,7 +245,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             do {
                 key = _getch();
             } while (key != 'a' && key != 'A' && key != 'd' && key != 'D' && key != '\r');
-            
+
             //rezeta os buffs
             if (actions == 2) {
                 playerInfoCombat = "";
@@ -277,7 +277,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         selectedOption++;
                     }
                 }
-            }//selecionou uma opção 
+            }//selecionou uma opção
             else if (key == '\r') {
                 if (!exibirItens) {
                     switch (selectedOption) {
@@ -340,7 +340,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                                     buttonsLayout[i] = "";
                                 }
                             }
-                            
+
                         }
                         break;
                         //tenta fugir do combate e zera as ações
@@ -402,7 +402,7 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             do {
                 key = _getch();
             } while (key != '\r');
-            
+
             //caso tenha confirmado vai para proxima acao
             if (key == '\r') {
                 indexCombat = (indexCombat + 1) % totalCombatants;
@@ -487,6 +487,6 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
     clearConsole();
     system("cls");
-    
+
     return returnCombat;
 }

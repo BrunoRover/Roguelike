@@ -9,11 +9,16 @@ const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
 const int baseLength = 120;
-const int countVisibleEnemies = 5;
+const int maxCountVisibleEnemies = 10;
 const int coutMaxItens = 7;
-const int itemXp = 100;
-const int npcXp = 100;
+const int itemXp = 10;
+const int npcXp = 80;
 const int levelUp = 100;
+const int countEnemiesBoss = 100;
+
+int countVisibleEnemies = 5;
+int  itensSpaw = 15;
+
 int  kill = 0;
 int  difficulty = 0;
 int  rangeVision = 3;
@@ -32,12 +37,12 @@ struct Item {
 };
 
 struct GameElements {
-    char person = char(36);  
-    char wall = char(219);   
-    char path = ' '; 
+    char person = char(36);
+    char wall = char(219);
+    char path = ' ';
     char dark = '.';
     char door = char(35);
-    char bossMap = char(33); 
+    char bossMap = char(33);
     char key = char(42); //*
     char item = char(38); //&
     char trap = char(63); //?
@@ -62,7 +67,7 @@ struct Player {
     int key = 0;
     Item inventory[coutMaxItens];
     int inventoryCount = 0;
-    int bossMap = 0; 
+    int bossMap = 0;
     bool inBossRoom = false;
     bool bossRoomFirstEntry = true;
     int xp = 0;
