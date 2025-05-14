@@ -21,7 +21,7 @@ bool isWin = false;
 void Reset() {
     gameOver = false;
     isWin = false;
-    player.attack = 1;
+    player.attack = 0;
     player.defense = 0;
     player.key = 0;
     player.inventoryCount = 0;
@@ -225,6 +225,9 @@ void Game() {
                         } else {
                             if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
                         }
+                        break;
+                    case 105: case 'I':
+                        drawInventory();
                         break;
                     case 27:
                         clearConsole();

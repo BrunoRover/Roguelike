@@ -25,6 +25,7 @@ void instructiongame(){
     cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: \n'Atacar' (gera um ataque no inimigo). \n'Defender' (defende do inimigo). \n'Fugir' (sai do combate). \n'Itens' (abre inventario, para utilizar algum item coletado).\n";
     cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, \nvoce tera que recomecar a partida desde o inicio.\n";
     cout << "\n4- Sistema de Pontuacao: \n+5 pontos para cada inimigo eliminado. \n+1 ponto para cada item ou chave coletado.\n-1 pontos a cada 2 minutos de jogo corrido.\n";
+    cout << "\n4- Sistema de Nivel: \nCada item da 10 de xp. \nCada inimigo derrotado da 80xp.\nLevel up a cada 100xp.\n";
     cout << "\nPressione 'Enter' para voltar ao Menu.";
     cin.get();
     cout << "\033c"; // Sai do jogo e volta pro menu.

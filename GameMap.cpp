@@ -69,13 +69,23 @@ void initEnemies(GameMap& map) {
 
 //função responsavel mostrar inimigo
 void drawEnemie(VisibleMap& vmap) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
     for (int i = 0; i < countVisibleEnemies; i++) {
         if (enemySpawns[i].active && vmap.visible[enemySpawns[i].y][enemySpawns[i].x]) {
             COORD coord;
             coord.X = (SHORT)enemySpawns[i].x;
             coord.Y = (SHORT)enemySpawns[i].y;
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-            cout << enemySpawns[i].typeNpc.color + enemySpawns[i].type + "\033[0m";
+            SetConsoleCursorPosition(hConsole, coord);
+
+            // Define a cor baseada em enemySpawns[i].typeNpc.color
+            int colorCode = enemySpawns[i].typeNpc.color; // você precisa definir isso como int (ex: 12 = vermelho claro)
+            SetConsoleTextAttribute(hConsole, colorCode);
+            
+            cout << enemySpawns[i].type;
+
+            // Resetar para cor padrão (geralmente 7)
+            SetConsoleTextAttribute(hConsole, 7);
         }
     }
 }
@@ -350,7 +360,7 @@ void drawInfo() {
     coord.X = 0;
     coord.Y = 26;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    cout << padRight("Vida: " + to_string(player.life) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + "/" + to_string(MAX_ITEMS) + " | Chaves Coletadas: " + to_string(player.key));
+    cout << padRight("Nivel: " + to_string(player.level) + " | Vida: " + to_string(player.life) + " | Ataque: " + to_string(player.attack) + " | Defesa: " + to_string(player.defense) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + "/" + to_string(MAX_ITEMS) + " | Chaves Coletadas: " + to_string(player.key) + " | XP Total: " + to_string(player.xp));
     cout << "\n";
     cout << padRight("Mensagens: " + lastMessage);
 }

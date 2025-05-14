@@ -37,15 +37,20 @@ bool makeAttack(int attack, int defend) {
 }
 
 //muda a ordenação do combate
-void sortCombatants(Combatant combatants[], int totalCombatants) {
-    for (int i = 0; i < totalCombatants - 1; i++) {
-        for (int j = 0; j < totalCombatants - i - 1; j++) {
-            if (combatants[j].initiative < combatants[j + 1].initiative) {
-                Combatant temp = combatants[j];
-                combatants[j] = combatants[j + 1];
-                combatants[j + 1] = temp;
-            }
+void sortCombatants(Combatant combatants[], int totalCombatants, int i = 0, int j = 0) {
+    // Caso base: terminou o array
+    if (i >= totalCombatants - 1) return;
+
+    // Loop interno recursivo
+    if (j < totalCombatants - i - 1) {
+        if (combatants[j].initiative < combatants[j + 1].initiative) {
+            Combatant temp = combatants[j];
+            combatants[j] = combatants[j + 1];
+            combatants[j + 1] = temp;
         }
+        sortCombatants(combatants, totalCombatants, i, j + 1); // continua comparando
+    } else {
+        sortCombatants(combatants, totalCombatants, i + 1, 0); // passa para o próximo "round" de bolhas
     }
 }
 

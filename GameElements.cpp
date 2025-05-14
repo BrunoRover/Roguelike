@@ -1,5 +1,6 @@
 #pragma once
 using namespace std;
+#include <sstream>
 #include <string>
 #include <windows.h>
 #define MAX_ITEMS 15
@@ -95,16 +96,21 @@ struct typeNpc {
     int bonusLife;
     int bonusAttack;
     int bonusDefense;
-    string color;
+    int color;
 };
 
 typeNpc typesNpc[3] = {
-    {"Guerreiro",2,1,2,"\033[0;32m"},
-    {"Mago",0,3,0,"\033[0;34m"},
-    {"Ladino",1,2,0,"\033[0;33m"},
+    {"Guerreiro",2,1,2,2},
+    {"Mago",0,3,0,1},
+    {"Ladino",1,2,0,14},
 };
 
-string padRight(const string& text) {
+template <typename T>
+string padRight(const T& value) {
+    ostringstream oss;
+    oss << value;
+    string text = oss.str();
+
     if (text.length() >= baseLength) return text.substr(0, baseLength);
     return text + string(baseLength - text.length(), ' ') + "\n";
 }
