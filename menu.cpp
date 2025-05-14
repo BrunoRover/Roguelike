@@ -34,7 +34,7 @@ void instructiongame(){
 void Itens(){
     cout << "\033c";
     cout << ">>>>> ITENS <<<<<\n\n";
-    for (int i=0;i<4;i++){
+    for (int i=0;i<coutMaxItens;i++){
     cout << itens[i].name << ": " << itens[i].description << endl << endl;
     }
     cout << "pressione Enter para voltar ao Menu.";
