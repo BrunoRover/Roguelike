@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iomanip> // Para setw e setfill, exibi��o do tempo de jogo.
 #include "GameElements.cpp"
+#include "iaMode.cpp"
 #include "save.cpp"
 #include "BossMap.cpp"
 #include "GameMap.cpp"
@@ -67,6 +68,12 @@ void drawInfoFinal(time_t start) {
 
 void Game() {
 
+    //variaveis para a IA
+    bool modoIA = true; //ativa IA
+    int tamanhoComandosIA;
+    char* comandosIA = gerarComandosIA(tamanhoComandosIA);
+    int passoIA = 0;
+
     //pagina1 e pagina2 é referente a história do jogo
     cout << pagina1;
     cin.get();
@@ -114,6 +121,7 @@ void Game() {
     bool isReset = false;
     //logica do jogo 
     while (!gameOver && !isWin) {
+        
         if (player.life == 0){
             gameOver = true;
         }
@@ -198,9 +206,22 @@ void Game() {
         }
 
         drawInfo(); // mostra as informações do jogador e do jogo em tempo real
-        if (_kbhit()) {
+        bool recebeuInput = false;
+        if (modoIA) {
+            if (passoIA < tamanhoComandosIA) {
+                tecla = comandosIA[passoIA++];
+                recebeuInput = true;
+                Sleep(0); // delay da IA
+            } else {
+                gameOver = true;
+                continue;
+            }
+        } else if (_kbhit()) {
             tecla = _getch();
-            //lógica de movimentação do jogador na sala do boss
+            recebeuInput = true;
+        }
+
+        if (recebeuInput) {
             switch (tecla) {
                 case 72: case 'w':
                     if (player.inBossRoom) {
@@ -230,16 +251,17 @@ void Game() {
                         if (x < 104 && mapa.tiles[y][x+1] == 0) x++;
                     }
                     break;
-                case 27:
+                case 27: 
                     clearConsole();
                     gameOver = true; 
                     drawInfoFinal(start); 
                     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
                     cin.get();
-                    
+                    break;
             }
         }
     }
+
     clearConsole();
     gameOver = true; 
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;
