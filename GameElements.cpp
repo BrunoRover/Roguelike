@@ -65,6 +65,7 @@ struct Player {
     bool fase2Iniciada = false;
     bool phaseResetDone = false;
     bool phaseRoomFirstEntry = true;
+    bool modeIA = true;
 };
 
 struct Npc {

@@ -69,10 +69,9 @@ void drawInfoFinal(time_t start) {
 void Game() {
 
     //variaveis para a IA
-    bool modoIA = true; //ativa IA
-    int tamanhoComandosIA;
-    char* comandosIA = gerarComandosIA(tamanhoComandosIA);
-    int passoIA = 0;
+    int sizeCommands;
+    char* commandsPlayer = generateCommands(sizeCommands);
+    int steps = 0;
 
     //pagina1 e pagina2 é referente a história do jogo
     cout << pagina1;
@@ -206,22 +205,22 @@ void Game() {
         }
 
         drawInfo(); // mostra as informações do jogador e do jogo em tempo real
-        bool recebeuInput = false;
-        if (modoIA) {
-            if (passoIA < tamanhoComandosIA) {
-                tecla = comandosIA[passoIA++];
-                recebeuInput = true;
-                Sleep(0); // delay da IA
+        bool input = false;
+        if (player.modeIA) {
+            if (steps < sizeCommands) {
+                tecla = commandsPlayer[steps++];
+                input = true;
+                Sleep(70); // delay da IA
             } else {
                 gameOver = true;
                 continue;
             }
         } else if (_kbhit()) {
             tecla = _getch();
-            recebeuInput = true;
+            input = true;
         }
 
-        if (recebeuInput) {
+        if (input) {
             switch (tecla) {
                 case 72: case 'w':
                     if (player.inBossRoom) {
@@ -261,7 +260,9 @@ void Game() {
             }
         }
     }
-
+    if(player.modeIA){
+        drawInfoFinal(start); 
+    }
     clearConsole();
     gameOver = true; 
     cout << "Pressione 'Enter' para voltar ao Menu." << endl;

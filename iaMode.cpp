@@ -1,9 +1,7 @@
-#include <vector>
-using namespace std;
-
-char* gerarComandosIA(int& tamanho) {
+#include <windows.h>
+char* generateCommands(int& size) {
     
-    static char comandos[] = {'a','a','a','a','a','a','a','a','s','s','s','s','a','a','a','a','a','a','a','a','a','a','a','a','a',
+    static char commands[] = {'a','a','a','a','a','a','a','a','s','s','s','s','a','a','a','a','a','a','a','a','a','a','a','a','a',
     'a','a','a','a','a','a','w','w','w','w','w','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
     'w','w','w','w','a','a','a','a','w','w','w','w','w','a','a','a','d','d','d','s','s','s','s','s','d','d','d',
     'd','s','s','s','s','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','s','s','s','s','s','d',
@@ -29,7 +27,7 @@ char* gerarComandosIA(int& tamanho) {
     's','s','s','s','s','s','s','s','s','s','s','s','s','d','d','d','d','d','d','d','d','w','w','w','w','w',
     'w','w','w','w','w',};
 
-    tamanho = sizeof(comandos) / sizeof(comandos[0]);
+    size = sizeof(commands) / sizeof(commands[0]);
 
-    return comandos;
+    return commands;
 }

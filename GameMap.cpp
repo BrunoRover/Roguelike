@@ -239,14 +239,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                     case 1: player.life -= 2; lastMessage = "Armadilha perigosa! -2 de vida!"; break;
                     case 2: player.life += 1; lastMessage = "Armadilha inofensiva! +1 de vida!"; break;
                     case 3: lastMessage = "Você escapou da armadilha sem dano!"; break;
-                    case 4: 
-                        if (player.key > 0) {
-                            player.key -= 1;
-                            lastMessage = "A armadilha fez você perder uma chave!";
-                        } else {
-                            lastMessage = "A armadilha tentou pegar uma chave, mas você não tem nenhuma!";
-                        }
-                        break;
+                    default: lastMessage = "Você pisou numa armadilha! Mas não teve efeito!"; break;
                 }
             }
 

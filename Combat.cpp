@@ -9,6 +9,7 @@ using namespace std;
 // int  kill = 0;
 bool gameOver = false;
 
+
 string buttons[countButtons] = {"ATACAR", "DEFENDER", "ITENS", "FUGIR"};
 
 //usado para gerear os inimigos para o combate
@@ -219,9 +220,15 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         //verifica se e a vez do jogador
         if (!infoCombat[indexCombat].isNpc) {
             //garante que a tecla seja valida
-            do {
-                key = _getch();
-            } while (key != 'a' && key != 'A' && key != 'd' && key != 'D' && key != '\r');
+            if (player.modeIA) {
+                Sleep(800);
+                key = '\r'; // IA sempre "pressiona" Enter
+            } else {
+                do {
+                    key = _getch();
+                } while (key != 'a' && key != 'A' && key != 'd' && key != 'D' && key != '\r');
+            }
+            
             
             //rezeta os buffs
             if (actions == 2) {
@@ -373,9 +380,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
 
         } else {
             //garante que a tecla seja valida
+            if (player.modeIA) {
+                Sleep(800);
+                key = '\r'; // IA sempre "pressiona" Enter
+        } else {
             do {
                 key = _getch();
             } while (key != '\r');
+        }
             
             //caso tenha confirmado vai para proxima acao
             if (key == '\r') {
@@ -437,9 +449,14 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     cout << padRight("");
     cout << padRight("");
     cout << padRight("");
-    do {
+    if (player.modeIA) {
+        Sleep(800);
+        key = '\r'; 
+    } else {
+        do {
         key = _getch();
-    }while (key!= '\r');
+    } while (key != '\r');
+}
 
     clearConsole();
     system("cls");
