@@ -1,0 +1,24 @@
+--- Relatorio de Partida ---
+Pontuacao: 20
+Vida Final: 0
+Itens Coletados: 3/15
+Chaves Coletadas: 1
+Tempo de Jogo: 2:14 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 0
+Vida Final: 1
+Itens Coletados: 0/15
+Chaves Coletadas: 0
+Tempo de Jogo: 0:04 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 17
+Vida Final: 0
+Itens Coletados: 6/15
+Chaves Coletadas: 0
+Tempo de Jogo: 1:53 minutos
+-----------------------------
+

@@ -21,9 +21,11 @@ void ClearConsole() {
 void instructiongame(){
     ClearConsole();
     cout << "\033c";
-    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. Use o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a acao.\n";
-    cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: 'Atacar' (gera um ataque no inimigo), 'Defender' (defende do inimigo), 'Fugir' (sai do combate), 'Itens' (abre inventario, para utilizar algum item coletado).\n";
-    cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, voce tera que recomecar a partida desde o inicio.\n";
+    cout << ">> Como Jogar <<\n\n1 Movimento e Controles:\nUse as teclas 'W''A''S''D' para mover seu personagem. \nUse o 'A' e 'D' para mover o cursor, e 'Enter' para selecionar a acao.\n";
+    cout << "\n2- Acoes de Batalha: \nAo iniciar uma batalha, voce tera 4 opcoes: \n'Atacar' (gera um ataque no inimigo). \n'Defender' (defende do inimigo). \n'Fugir' (sai do combate). \n'Itens' (abre inventario, para utilizar algum item coletado).\n";
+    cout << "\n3- Mecanica da Morte Permanente: \nRoguelike segue o sistema de Permadeath , o que significa que, se seu personagem morrer, \nvoce tera que recomecar a partida desde o inicio.\n";
+    cout << "\n4- Sistema de Pontuacao: \n+5 pontos para cada inimigo eliminado. \n+1 ponto para cada item ou chave coletado.\n-1 pontos a cada 2 minutos de jogo corrido.\n";
+    cout << "\n5- Sistema de Nivel: \nCada item da 10 de xp. \nCada inimigo derrotado da 80xp.\nLevel up a cada 100xp.\n";
     cout << "\nPressione 'Enter' para voltar ao Menu.";
     cin.get();
     cout << "\033c"; // Sai do jogo e volta pro menu.
@@ -33,30 +35,112 @@ void instructiongame(){
 void Itens(){
     cout << "\033c";
     cout << ">>>>> ITENS <<<<<\n\n";
-    for (int i=0;i<4;i++){
-    cout << itens[i].name << ": " << itens[i].description << endl << endl;
+    for (int i=0;i<coutMaxItens;i++){
+        cout << itens[i].name << ": " << itens[i].description << endl << endl;
     }
     cout << "pressione Enter para voltar ao Menu.";
     cin.get();
     cout << "\033c";
- }
+}
 
-
-const int N_OPCOES = 5;
+const int N_OPCOES = 7, N_DIFFICULTY = 4;
 int selectedMenuItem = 0, MenuItem = 0, Menu = 0;
-string Opcoes[N_OPCOES] = {"  Jogar   ", "Como Jogar", "  Itens   ", "Historico", "  Sair    "};
+string Opcoes[N_OPCOES] = {"    Jogar     ", " Como Jogar   "," Dificuldade  ", "    Itens     ", "  Historico   ", "Auto Game", "    Sair      "};
+string OpcoesDifficulty[N_DIFFICULTY] = {"  Facil  ", "  Medio  ", "  Dificil", "  Voltar "};
 
 //renderiza o menu, limpando e reescrevendo com "> ".
-void RenderMenu(int MenuItem){ 
+void RenderMenu(int MenuItem,Player &player){
     _kbhit();
     ClearConsole();
-    cout << "= " + titleGame + " =\n";
-    cout << "|================|\n";
+    cout << "|== " + titleGame + " ==|\n";
+    cout << "|====================|\n";
     for (int i = 0; i < N_OPCOES; i++){
-            if (MenuItem == i){
-            cout << "|>> " << Opcoes[i] << " <<|" << endl;
-            }else{
-            cout << "|   " << Opcoes[i] << "   |" << endl;
-        }   cout << "|================|\n";
+        string txtRender = Opcoes[i];
+        if(i == 5){ //Jogo automatico
+            if (player.modeIA) {
+                txtRender += " [OK]"; // Verde
+            } else {
+                txtRender += " [X] ";  // Vermelho
+            }
+        }
+
+        if (MenuItem == i){
+            cout << "|>> " << txtRender << " <<|" << endl;
+        }else{
+            cout << "|   " << txtRender << "   |" << endl;
+        }
+        cout << "|====================|\n";
     }
+}
+
+void RenderDifficult(int difficulty){
+    _kbhit();
+    ClearConsole();
+    cout << "= DIFICULDADE DO JOGO =\n";
+    cout << "|================|\n";
+    for (int i = 0; i < N_DIFFICULTY; i++){
+        if (difficulty == i){
+            cout << "|>> " << OpcoesDifficulty[i] << "  <<|" << endl;
+        }else{
+            cout << "|   " << OpcoesDifficulty[i] << "    |" << endl;
+        }
+        cout << "|================|\n";
+    }
+}
+
+void Difficulty(Player &player){
+    bool exit = false;
+    int bkDifficulty = difficulty;
+    cout << "\033c";
+    RenderDifficult(difficulty);
+
+    while (!exit) {
+        if (_kbhit()) {
+            int key = _getch();
+            switch (key) {
+                case 72: case 'w': case 'W':
+                    if (difficulty == 0){
+                        difficulty = 3;
+                    } else {
+                        difficulty -= 1;
+                    }
+                    break;
+                case 80: case 's': case 'S':
+                    if (difficulty == N_DIFFICULTY-1){
+                        difficulty = 0;
+                    } else {
+                        difficulty +=1;
+                    }
+                    break;
+                case 13: case 32:
+                    if (OpcoesDifficulty[difficulty] == "  Facil  "){
+                        cout << "\nDificuldade Facil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
+                    } else if (OpcoesDifficulty[difficulty] == "  Medio  ") {
+                        cout << "\nDificuldade Medio selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
+                    } else if (OpcoesDifficulty[difficulty] == "  Dificil") {
+                        cout << "\nDificuldade Dificil selecionada.\n\nPresssione 'Enter' para voltar ao Menu.";
+                        cin.get();
+                        cout << "\033[2J\033[H";
+                        exit = true;
+                    } else if (OpcoesDifficulty[difficulty] == "  Voltar ") {
+                        difficulty = bkDifficulty;
+                        cout << "Saindo...\n";
+                        exit = true;
+                        cout << "\033c";
+                    }
+                    break;
+            }
+            RenderDifficult(difficulty);
+        }
+    }
+}
+
+void changeAutoPlay(Player &player){
+    player.modeIA = !player.modeIA;
 }

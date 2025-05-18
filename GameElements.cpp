@@ -1,17 +1,28 @@
 #pragma once
 using namespace std;
+#include <sstream>
 #include <string>
 #include <windows.h>
-#define MAX_ITEMS 4
+#define MAX_ITEMS 15
 
 
 const int countButtons = 4;
 const int maxLifeNpc = 2;
 const int maxCombatants = 10;
 const int baseLength = 120;
-const int countVisibleEnemies = 5;
-const int coutMaxItens = 4;
+const int maxCountVisibleEnemies = 15;
+const int coutMaxItens = 7;
+const int itemXp = 10;
+const int npcXp = 80;
+const int levelUp = 100;
+const int countEnemiesBoss = 100;
+
+int countVisibleEnemies = 5;
+int  itensSpaw = 15;
+
 int  kill = 0;
+int  difficulty = 0;
+int  rangeVision = 3;
 
 string addInfoCombat = "";
 string playerInfoCombat = "";
@@ -27,9 +38,9 @@ struct Item {
 };
 
 struct GameElements {
-    char person = char(36);  
-    char wall = char(219);   
-    char path = ' '; 
+    char person = char(36);
+    char wall = char(219);
+    char path = ' ';
     char dark = '.';
     char newPhase = 'H';
     char door = char(35);
@@ -46,12 +57,15 @@ Item itens[coutMaxItens] = {
     {1, "Pocao de cura", "Uma pocao feita por um grande alquimista ao usa-la ganha +1 de vida", true, 1},
     {2, "Pergaminho de misseis magicos", "Retira 1 de vida do inimigo sem precisar de acerto", true, 1},
     {3, "Espada do sol", "Uma espada feita com uma sentelha divina do Deus Tyr. Aumenta +2 de acerto permanente", false, 2},
-    {4, "Escudo da pureza", "Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente", false, 2}
+    {4, "Escudo da pureza", "Um escudo onde protege o portador de verdadeira alma pura. Aumenta +2 a defesa permanente", false, 2},
+    {5, "Tocha Eterna de Everbright", "Uma tocha mágica que ilumina até os cantos mais escuros. Aumenta o campo de visao do jogador", false, 3},
+    {6, "Bomba arcana", "Uma bomba completamente instavel da de 0 a 3 de dano instantaneo ao inimigo", true, 3},
+    {7, "Fio de prata", "Ao chegar em 0 de vida, sobrevive com 1 de vida, apos isso o fio se rompe", false, 1}
 };
 
 struct Player {
-    int life = 5;
-    int attack = 1;
+    int life = 500;
+    int attack = 0;
     int defense = 0;
     int key = 0;
     Item inventory[coutMaxItens];
@@ -65,7 +79,9 @@ struct Player {
     bool fase2Iniciada = false;
     bool phaseResetDone = false;
     bool phaseRoomFirstEntry = true;
-    bool modeIA = true;
+    bool modeIA = false;
+    int xp = 0;
+    int level = 0;
 };
 
 struct Npc {
@@ -84,7 +100,26 @@ struct Combatant {
     bool isNpc;
 };
 
-string padRight(const string& text) {
+struct typeNpc {
+    string type;
+    int bonusLife;
+    int bonusAttack;
+    int bonusDefense;
+    int color;
+};
+
+typeNpc typesNpc[3] = {
+    {"Guerreiro",2,1,2,2},
+    {"Mago",0,3,0,1},
+    {"Ladino",1,2,0,14},
+};
+
+template <typename T>
+string padRight(const T& value) {
+    ostringstream oss;
+    oss << value;
+    string text = oss.str();
+
     if (text.length() >= baseLength) return text.substr(0, baseLength);
     return text + string(baseLength - text.length(), ' ') + "\n";
 }
@@ -135,6 +170,11 @@ string pagina2 =
 "  E assim, sem hesitar, Voce adentra a escuridao,\n"
 "  onde Lina aguarda... e o destino sera decidido.\n";
 
+string buffCombat[3] = {
+    "Vida",
+    "Ataque",
+    "Defesa"
+};
 
 const int countEnemies = 1;
 Npc enemies[countEnemies];
