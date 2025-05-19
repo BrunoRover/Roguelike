@@ -54,7 +54,7 @@ void sortCombatants(Combatant combatants[], int totalCombatants, int i = 0, int 
 }
 
 //gera a iniciativa de todos combatentes incluindo o jogador
-void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player,typeNpc typeCombat) {
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player, typeNpc* typeCombat = nullptr) {
     int totalCombatants = coutEnemie + 1;
 
     infoCombat[0].name = "Jogador";
@@ -64,10 +64,16 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
 
     for (int i = 1; i < totalCombatants; i++) {
         infoCombat[i].npc = enemies[i - 1];
-        infoCombat[i].name = ("Inimigo " + to_string(i) + "(" + typeCombat.type + ")");
-        infoCombat[i].npc.life += typeCombat.bonusLife;
-        infoCombat[i].npc.attack += typeCombat.bonusAttack;
-        infoCombat[i].npc.defense += typeCombat.bonusDefense;
+
+        if (typeCombat != nullptr) {
+            infoCombat[i].name = "Inimigo " + to_string(i) + " (" + typeCombat->type + ")";
+            infoCombat[i].npc.life += typeCombat->bonusLife;
+            infoCombat[i].npc.attack += typeCombat->bonusAttack;
+            infoCombat[i].npc.defense += typeCombat->bonusDefense;
+        } else {
+            infoCombat[i].name = "Inimigo " + to_string(i) + " (Boss)";
+        }
+
         infoCombat[i].isNpc = true;
         infoCombat[i].initiative = randNumb();
     }
@@ -75,24 +81,6 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
     sortCombatants(infoCombat, totalCombatants);
 }
 
-//gera a iniciativa de todos combatentes incluindo o jogador usado para o boss
-void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
-    int totalCombatants = coutEnemie + 1;
-
-    infoCombat[0].name = "Jogador";
-    infoCombat[0].isNpc = false;
-    infoCombat[0].initiative = randNumb();
-    infoCombat[0].player = player;
-
-    for (int i = 1; i < totalCombatants; i++) {
-        infoCombat[i].npc = enemies[i - 1];
-        infoCombat[i].name = ("Inimigo " + to_string(i) + "(Boss)");
-        infoCombat[i].isNpc = true;
-        infoCombat[i].initiative = randNumb();
-    }
-
-    sortCombatants(infoCombat, totalCombatants);
-}
 
 //acoes automaticas do npc
 void actionNpc(Combatant& npc, Combatant& player) {
@@ -122,33 +110,18 @@ void removeCombatant(Combatant infoCombat[], int& totalCombatants, int indexToRe
 }
 
 //retira o item do inventario ao ser usado
-void removeItemFromInventory(Combatant& combatant, const string& item) {
-    int indexItem = -1;
-
-    // Localiza o índice do item
-    for (int i = 0; i < combatant.player.inventoryCount; ++i) {
-        if (combatant.player.inventory[i].name == item) {
-            indexItem = i;
+void removeItemFromInventory(Combatant& combatant, string item) {
+    int indexitem = 0;
+    for (int i = 0; i <= 3; ++i) {
+        if(combatant.player.inventory[i].name == item){
+            indexitem = i;
             break;
         }
     }
-
-    // Se encontrou o item
-    if (indexItem != -1) {
-        // Move os itens para preencher o buraco
-        for (int i = indexItem; i < combatant.player.inventoryCount - 1; ++i) {
-            combatant.player.inventory[i] = combatant.player.inventory[i + 1];
-        }
-
-        // Limpa o último item e atualiza contador
-        combatant.player.inventory[combatant.player.inventoryCount - 1] = Item{};
-        combatant.player.inventoryCount--;
-
-        // Proteção extra para não deixar contador negativo
-        if (combatant.player.inventoryCount < 0) {
-            combatant.player.inventoryCount = 0;
-        }
+    for (int i = indexitem; i < 3; ++i) {
+        combatant.player.inventory[i] = combatant.player.inventory[i + 1];
     }
+    combatant.player.inventory[3] = Item{};
 }
 
 // renderiza a intereface de combate
@@ -193,7 +166,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
 }
 
 //toda logica de como e executado o combate acoes ordenacao e fim
-int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
+bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
     bool isWin = false;
@@ -370,6 +343,8 @@ int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         playerInfoCombat = "Voce usou " + itens[0].name;
                         infoCombat[indexCombat].player.life++;
                         actions--;
+                         // muda cor para verde (cura)
+                        player.colorText = 10;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[0].name);
                     }else if(buttonsLayout[selectedOption] == itens[1].name){
@@ -377,6 +352,8 @@ int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         playerInfoCombat = "Voce usou " + itens[1].name;
                         infoCombat[targetIndex].npc.life--;
                         actions--;
+                        // muda cor para vermelho (ataque mágico)
+                        player.colorText = 12;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[1].name);
                     }else if(buttonsLayout[selectedOption] == itens[5].name){
@@ -384,6 +361,8 @@ int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
                         playerInfoCombat = "Voce usou " + itens[5].name;
                         infoCombat[targetIndex].npc.life -= rand() % (itens[5].value + 1);
                         actions--;
+                        // muda cor para vermelho (ataque mágico)
+                        player.colorText = 12;
                         //remove o item dps de usado
                         removeItemFromInventory(infoCombat[indexCombat],itens[5].name);
                     }
@@ -437,6 +416,7 @@ int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
             if(reLife){
                 cout << "MAS O " + itens[6].name + "SALVOU SUA VIDA E SE ROMPEU";
                 player.life = 1;
+                player.colorText = 10;
                 removeItemFromInventory(infoCombat[indexPlayer],itens[6].name);
             }else{
                 player.life = 0;
@@ -463,8 +443,6 @@ int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         for (int i = 0; i < 4; ++i) {
             player.inventory[i] = infoCombat[playerIndex].player.inventory[i];
         }
-
-        player.inventoryCount = infoCombat[playerIndex].player.inventoryCount;
     }
 
     string strCombat = "";

@@ -25,7 +25,7 @@ char* generateCommands(int& size) {
     'd','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','w','w',
     'w','w','w','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','d','s','s','s','s',
     's','s','s','s','s','s','s','s','s','s','s','s','s','d','d','d','d','d','d','d','d','w','w','w','w','w',
-    'w','w','w','w','w',};
+    'w','w','w','w','w','w','w','w','w','w','w','w',};
 
     size = sizeof(commands) / sizeof(commands[0]);
 

@@ -241,14 +241,9 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                     player.xp += itemXp;
                     break;
                 }else{
-                    if(player.inventoryCount < coutMaxItens){
-                        player.inventory[player.inventoryCount] = newItem;
-                        player.inventoryCount++;
-                        lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
-                    }else{
-                        
-                        lastMessage = "Seu inventario esta cheio !";
-                    }
+                    player.inventory[player.inventoryCount] = newItem;
+                    player.inventoryCount++;
+                    lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
                     player.xp += itemXp;
                 }
             }
@@ -261,14 +256,17 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                     case 0:
                         player.life -= 1;
                         lastMessage = "Voce pisou numa armadilha! -1 de vida!";
+                        player.colorText = 13;
                         break;
                     case 1:
                         player.life -= 2;
                         lastMessage = "Armadilha perigosa! -2 de vida!";
+                        player.colorText = 12;
                         break;
                     case 2:
                         player.life += 1;
                         lastMessage = "Armadilha inofensiva! +1 de vida!";
+                        player.colorText = 10;
                         break;
                     case 3:
                         lastMessage = "Voce escapou da armadilha sem dano!";
@@ -332,7 +330,7 @@ void checkItems(GameMap& map, int playerX, int playerY) {
             clearConsole();
             Combatant infoCombat[maxCombatants];
             typeNpc typeCombat = enemySpawns[i].typeNpc;
-            generateInitiatives(infoCombat, enemies, countEnemies, player, typeCombat);
+            generateInitiatives(infoCombat, enemies, countEnemies, player, &typeCombat);
             int totalCombatants = countEnemies + 1;
 
             // inicia o combate contra o inimigo
@@ -397,7 +395,7 @@ void drawInfo() {
     coord.X = 0;
     coord.Y = 26;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    cout << padRight("Nivel: " + to_string(player.level) + " | Vida: " + to_string(player.life) + " | Ataque: " + to_string(player.attack) + " | Defesa: " + to_string(player.defense) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + " | Chaves Coletadas: " + to_string(player.key) + " | XP Total: " + to_string(player.xp));
+    cout << padRight("Nivel: " + to_string(player.level) + " | Vida: " + to_string(player.life) + " | Ataque: " + to_string(player.attack) + " | Defesa: " + to_string(player.defense) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + "/" + to_string(MAX_ITEMS) + " | Chaves Coletadas: " + to_string(player.key) + " | XP Total: " + to_string(player.xp));
     cout << "\n";
     cout << padRight("Mensagens: " + lastMessage);
 }
@@ -516,6 +514,7 @@ void drawMap(GameMap& map, VisibleMap& vmap, int playerX, int playerY) {
     for (int i = 0; i < player.inventoryCount; i++){
         if(player.inventory[i].buffId == 5){
             visionRadius += player.inventory[i].value;
+            player.colorText = 14; 
             break;
         }
     }

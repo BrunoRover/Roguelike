@@ -240,7 +240,7 @@ void Game() {
                 if (steps < sizeCommands) {
                     tecla = commandsPlayer[steps++];
                     input = true;
-                    Sleep(70); // delay da IA
+                    Sleep(0); // delay da IA
                 } else {
                     gameOver = true;
                     continue;
