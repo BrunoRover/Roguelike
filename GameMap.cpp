@@ -241,9 +241,14 @@ void checkItems(GameMap& map, int playerX, int playerY) {
                     player.xp += itemXp;
                     break;
                 }else{
-                    player.inventory[player.inventoryCount] = newItem;
-                    player.inventoryCount++;
-                    lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
+                    if(player.inventoryCount < coutMaxItens){
+                        player.inventory[player.inventoryCount] = newItem;
+                        player.inventoryCount++;
+                        lastMessage = "Voce achou o item " + newItem.name + ",ele foi adicionado ao seu inventario!";
+                    }else{
+                        
+                        lastMessage = "Seu inventario esta cheio !";
+                    }
                     player.xp += itemXp;
                 }
             }
@@ -392,7 +397,7 @@ void drawInfo() {
     coord.X = 0;
     coord.Y = 26;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-    cout << padRight("Nivel: " + to_string(player.level) + " | Vida: " + to_string(player.life) + " | Ataque: " + to_string(player.attack) + " | Defesa: " + to_string(player.defense) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + "/" + to_string(MAX_ITEMS) + " | Chaves Coletadas: " + to_string(player.key) + " | XP Total: " + to_string(player.xp));
+    cout << padRight("Nivel: " + to_string(player.level) + " | Vida: " + to_string(player.life) + " | Ataque: " + to_string(player.attack) + " | Defesa: " + to_string(player.defense) + " | Itens Coletados: " + to_string(quantityOfItemCollected) + " | Chaves Coletadas: " + to_string(player.key) + " | XP Total: " + to_string(player.xp));
     cout << "\n";
     cout << padRight("Mensagens: " + lastMessage);
 }

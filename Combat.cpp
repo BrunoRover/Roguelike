@@ -122,18 +122,33 @@ void removeCombatant(Combatant infoCombat[], int& totalCombatants, int indexToRe
 }
 
 //retira o item do inventario ao ser usado
-void removeItemFromInventory(Combatant& combatant, string item) {
-    int indexitem = 0;
-    for (int i = 0; i <= 3; ++i) {
-        if(combatant.player.inventory[i].name == item){
-            indexitem = i;
+void removeItemFromInventory(Combatant& combatant, const string& item) {
+    int indexItem = -1;
+
+    // Localiza o índice do item
+    for (int i = 0; i < combatant.player.inventoryCount; ++i) {
+        if (combatant.player.inventory[i].name == item) {
+            indexItem = i;
             break;
         }
     }
-    for (int i = indexitem; i < 3; ++i) {
-        combatant.player.inventory[i] = combatant.player.inventory[i + 1];
+
+    // Se encontrou o item
+    if (indexItem != -1) {
+        // Move os itens para preencher o buraco
+        for (int i = indexItem; i < combatant.player.inventoryCount - 1; ++i) {
+            combatant.player.inventory[i] = combatant.player.inventory[i + 1];
+        }
+
+        // Limpa o último item e atualiza contador
+        combatant.player.inventory[combatant.player.inventoryCount - 1] = Item{};
+        combatant.player.inventoryCount--;
+
+        // Proteção extra para não deixar contador negativo
+        if (combatant.player.inventoryCount < 0) {
+            combatant.player.inventoryCount = 0;
+        }
     }
-    combatant.player.inventory[3] = Item{};
 }
 
 // renderiza a intereface de combate
@@ -178,7 +193,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
 }
 
 //toda logica de como e executado o combate acoes ordenacao e fim
-bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
+int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
     bool isWin = false;
@@ -448,6 +463,8 @@ bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
         for (int i = 0; i < 4; ++i) {
             player.inventory[i] = infoCombat[playerIndex].player.inventory[i];
         }
+
+        player.inventoryCount = infoCombat[playerIndex].player.inventoryCount;
     }
 
     string strCombat = "";
