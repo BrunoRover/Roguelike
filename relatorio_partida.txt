@@ -22,3 +22,35 @@ Chaves Coletadas: 0
 Tempo de Jogo: 1:53 minutos
 -----------------------------
 
+--- Relatorio de Partida ---
+Pontuacao: 0
+Vida Final: 500
+Itens Coletados: 0/15
+Chaves Coletadas: 0
+Tempo de Jogo: 0:08 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 0
+Vida Final: 500
+Itens Coletados: 0/15
+Chaves Coletadas: 0
+Tempo de Jogo: 0:11 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 4
+Vida Final: 500
+Itens Coletados: 3/15
+Chaves Coletadas: 1
+Tempo de Jogo: 3:56 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 4
+Vida Final: 500
+Itens Coletados: 3/15
+Chaves Coletadas: 1
+Tempo de Jogo: 3:59 minutos
+-----------------------------
+
