@@ -28,7 +28,7 @@ void Reset() {
     player.key = 0;
     player.inventoryCount = 0;
     player.bossMap = 0;
-    player.phase = 1; 
+    player.phase = 1;
     player.colorText = 7;
     player.inBossRoom = false;
     player.bossRoomFirstEntry = true;
@@ -52,11 +52,11 @@ void Reset() {
 void mostrarTempo(int segundos) { // Exibe o tempo de jogo em tempo real.
     int minutos = segundos / 60;
     int segundos_restantes = segundos % 60;
-    std::cout << "\033[30;30H";
-    std::cout << "\rTempo decorrido: "
-              << std::setfill('0') << std::setw(2) << minutos << ":"
-              << std::setfill('0') << std::setw(2) << segundos_restantes
-              << std::flush;
+    cout << "\033[30;30H";
+    cout << "\rTempo decorrido: "
+              << setfill('0') << setw(2) << minutos << ":"
+              << setfill('0') << setw(2) << segundos_restantes
+              << flush;
 }
 
 // calcula o score
@@ -143,14 +143,19 @@ void Game() {
 
     bool reset = false;
     bool isReset = false;
-    //logica do jogo 
+    //logica do jogo
     while (!gameOver && !isWin) {
         int thisXp = player.xp / levelUp;
-        
+
         if (player.life == 0){
             gameOver = true;
         }
+
+        time_t now = time(nullptr);                             //tempo atual
+        int elapsed = static_cast<int>(difftime(now, start));        //calcula a diferença do tempo que iniciou e o atual
+        mostrarTempo(elapsed);
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
         if(thisXp != player.level){
             levelToUp(thisXp, player);
         }else{
@@ -164,19 +169,19 @@ void Game() {
                 initItems(mapa, player.phase);
                 initEnemies(mapa);
                 resetPlayerAndVision(vmap, x, y, rows, cols);
-                reset = true; 
+                reset = true;
             }
             if(player.phase == 3){
-                mapa = getPhaseMap(3);                 
+                mapa = getPhaseMap(3);
             }
             if (player.phase == 3 && !isReset) {
                 mapa = getPhaseMap(3);
                 initItems(mapa, player.phase);
                 initEnemies(mapa);
                 resetPlayerAndVision(vmap, x, y, rows, cols);
-                isReset = true; 
+                isReset = true;
             }
-        
+
             if (player.bossMap && !player.inBossRoom) {
                 // Transição para a sala do boss
                 player.inBossRoom = true;
@@ -195,10 +200,7 @@ void Game() {
                     if (player.life == 0){
                         gameOver = true;
                     }
-                    
-                    std::time_t now = std::time(nullptr);                             //tempo atual
-                    int elapsed = static_cast<int>(std::difftime(now, start));        //calcula a diferença do tempo que iniciou e o atual
-                    mostrarTempo(elapsed);    
+
                     // Iniciar combate com o boss, lógica de combate aqui
                     lastMessage = "Voce encontrou o Chefao! Prepare-se para lutar!";
                     clearConsole();
@@ -208,10 +210,10 @@ void Game() {
                     generateInitiatives(infoCombatBoss, enemiesBoss, countEnemiesBoss, player);
                     int totalCombatantsBoss = countEnemiesBoss + 1;
                     int returnCombat = combatMenu(infoCombatBoss, totalCombatantsBoss, player);
-        
+
                     if(returnCombat == 0){
                         player.life = 0;
-                        gameOver = true; 
+                        gameOver = true;
                         lastMessage = "Voce morreu!\n\n";
                         cout << "Tente novamente, quem sabe na proxima...";
                         cin.get();
@@ -249,7 +251,7 @@ void Game() {
                 tecla = _getch();
                 input = true;
             }
-            
+
             if (input) {
                 switch (tecla) {
                     case 72: case 'w': case 'W':
@@ -285,8 +287,8 @@ void Game() {
                         break;
                     case 27:
                         clearConsole();
-                        gameOver = true; 
-                        drawInfoFinal(start); 
+                        gameOver = true;
+                        drawInfoFinal(start);
                         cout << "Pressione 'Enter' para voltar ao Menu." << endl;
                         cin.get();
                 }
@@ -298,7 +300,7 @@ void Game() {
         }
     }
     if(player.modeIA){
-        drawInfoFinal(start); 
+        drawInfoFinal(start);
     }
     clearConsole();
     gameOver = true;
@@ -319,7 +321,7 @@ int main() {
             switch (key) {
                 case 72: case 'w': case 'W':
                     if (MenuItem == 0){
-                        MenuItem = 4;
+                        MenuItem = N_OPCOES-1;
                     } else {
                         MenuItem -= 1;
                     }
@@ -357,7 +359,7 @@ int main() {
                         cout << "Saindo...\n";
                         exit = true;
                     }
-                    
+
                     break;
                 }
             RenderMenu(MenuItem,player);
