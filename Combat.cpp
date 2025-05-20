@@ -54,7 +54,7 @@ void sortCombatants(Combatant combatants[], int totalCombatants, int i = 0, int 
 }
 
 //gera a iniciativa de todos combatentes incluindo o jogador
-void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player, typeNpc* typeCombat = nullptr) {
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player,typeNpc typeCombat) {
     int totalCombatants = coutEnemie + 1;
 
     infoCombat[0].name = "Jogador";
@@ -64,16 +64,29 @@ void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, 
 
     for (int i = 1; i < totalCombatants; i++) {
         infoCombat[i].npc = enemies[i - 1];
+        infoCombat[i].name = ("Inimigo " + to_string(i) + "(" + typeCombat.type + ")");
+        infoCombat[i].npc.life += typeCombat.bonusLife;
+        infoCombat[i].npc.attack += typeCombat.bonusAttack;
+        infoCombat[i].npc.defense += typeCombat.bonusDefense;
+        infoCombat[i].isNpc = true;
+        infoCombat[i].initiative = randNumb();
+    }
 
-        if (typeCombat != nullptr) {
-            infoCombat[i].name = "Inimigo " + to_string(i) + " (" + typeCombat->type + ")";
-            infoCombat[i].npc.life += typeCombat->bonusLife;
-            infoCombat[i].npc.attack += typeCombat->bonusAttack;
-            infoCombat[i].npc.defense += typeCombat->bonusDefense;
-        } else {
-            infoCombat[i].name = "Inimigo " + to_string(i) + " (Boss)";
-        }
+    sortCombatants(infoCombat, totalCombatants);
+}
 
+//gera a iniciativa de todos combatentes incluindo o jogador usado para o boss
+void generateInitiatives(Combatant infoCombat[], Npc enemies[], int coutEnemie, Player player) {
+    int totalCombatants = coutEnemie + 1;
+
+    infoCombat[0].name = "Jogador";
+    infoCombat[0].isNpc = false;
+    infoCombat[0].initiative = randNumb();
+    infoCombat[0].player = player;
+
+    for (int i = 1; i < totalCombatants; i++) {
+        infoCombat[i].npc = enemies[i - 1];
+        infoCombat[i].name = ("Inimigo " + to_string(i) + "(Boss)");
         infoCombat[i].isNpc = true;
         infoCombat[i].initiative = randNumb();
     }
@@ -166,7 +179,7 @@ void displayCombatInterface(int selectedOption, int indexCombat, Combatant infoC
 }
 
 //toda logica de como e executado o combate acoes ordenacao e fim
-bool combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
+int combatMenu(Combatant infoCombat[], int& totalCombatants, Player& player) {
     int selectedOption = 0;
     char key;
     bool isWin = false;

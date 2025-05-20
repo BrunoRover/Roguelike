@@ -54,3 +54,83 @@ Chaves Coletadas: 1
 Tempo de Jogo: 3:59 minutos
 -----------------------------
 
+--- Relatorio de Partida ---
+Pontuacao: 19
+Vida Final: 499
+Itens Coletados: 4/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:18 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 19
+Vida Final: 499
+Itens Coletados: 4/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:18 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 23
+Vida Final: 500
+Itens Coletados: 4/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:37 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 23
+Vida Final: 500
+Itens Coletados: 4/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:37 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 21
+Vida Final: 496
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:38 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 21
+Vida Final: 496
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:38 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 28
+Vida Final: 494
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:43 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 28
+Vida Final: 494
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:43 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 27
+Vida Final: 494
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:55 minutos
+-----------------------------
+
+--- Relatorio de Partida ---
+Pontuacao: 27
+Vida Final: 494
+Itens Coletados: 2/15
+Chaves Coletadas: 3
+Tempo de Jogo: 1:55 minutos
+-----------------------------
+

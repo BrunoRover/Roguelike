@@ -15,7 +15,7 @@ const int coutMaxItens = 7;
 const int itemXp = 10;
 const int npcXp = 80;
 const int levelUp = 100;
-const int countEnemiesBoss = 100;
+const int countEnemiesBoss = 1;
 
 int countVisibleEnemies = 5;
 int  itensSpaw = 15;
